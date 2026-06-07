@@ -909,6 +909,7 @@ ___ %
 
 """
 
+```python
 user_history = {}
 
 
@@ -949,90 +950,35 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         temperature=0.8
     )
 
-answer = response.choices[0].message.content
+    answer = response.choices[0].message.content
 
-lead_ready = "[PIXORA_LEAD_READY]" in answer
+    lead_ready = "[PIXORA_LEAD_READY]" in answer
 
-if lead_ready:
+    if lead_ready:
 
-    await context.bot.send_message(
-        chat_id="499657192",
-        text=answer
-    )
-
-    clean_answer = (
-        "Дякую за надану інформацію.\n\n"
-        "Я вже сформував попередній опис вашого проєкту та передам його нашому профільному спеціалісту.\n\n"
-        "З вами зв'яжеться Сергій, який надалі буде супроводжувати проєкт та допоможе узгодити всі деталі безпосередньо.\n\n"
-        "Дякуємо, що звернулися до компанії PIXORA."
-    )
-
-else:
-    clean_answer = answer
-
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": clean_answer
-    }
-)
-
-await update.message.reply_text(clean_answer)
-
-else:
-    clean_answer = answer
-
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": clean_answer
-    }
-)
-
-await update.message.reply_text(clean_answer)
-
-else:
-    clean_answer = answer
-
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": clean_answer
-    }
-)
-
-await update.message.reply_text(clean_answer)
-
-else:
-    clean_answer = answer
-
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": clean_answer
-    }
-)
-
-await update.message.reply_text(clean_answer)
-
-
-def main():
-
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            chat
+        # Отправляем полный внутренний отчёт Сергею
+        await context.bot.send_message(
+            chat_id="499657192",
+            text=answer
         )
+
+        # Клиенту показываем только финальное сообщение
+        clean_answer = (
+            "Дякую за надану інформацію.\n\n"
+            "Я вже сформував попередній опис вашого проєкту та передам його нашому профільному спеціалісту.\n\n"
+            "З вами зв'яжеться Сергій, який надалі буде супроводжувати проєкт та допоможе узгодити всі деталі безпосередньо.\n\n"
+            "Дякуємо, що звернулися до компанії PIXORA."
+        )
+
+    else:
+        clean_answer = answer
+
+    user_history[user_id].append(
+        {
+            "role": "assistant",
+            "content": clean_answer
+        }
     )
 
-    print("PIXORA Manager started")
-
-    app.run_polling()
-
-
-if __name__ == "__main__":
-    main()
+    await update.message.reply_text(clean_answer)
+```
