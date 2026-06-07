@@ -975,7 +975,8 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(clean_answer)
-    def main():
+    
+def main():
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
