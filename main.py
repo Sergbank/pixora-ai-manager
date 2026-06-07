@@ -942,7 +942,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ] + user_history[user_id]
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-mini",
         messages=messages,
         temperature=0.8
     )
@@ -951,7 +951,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if "[PIXORA_LEAD_READY]" in answer:
 
     await context.bot.send_message(
-        chat_id="499657192",
+        chat_id=499657192,
         text=answer
     )
     user_history[user_id].append(
