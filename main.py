@@ -991,6 +991,30 @@ user_history[user_id].append(
 
 await update.message.reply_text(clean_answer)
 
+else:
+    clean_answer = answer
+
+user_history[user_id].append(
+    {
+        "role": "assistant",
+        "content": clean_answer
+    }
+)
+
+await update.message.reply_text(clean_answer)
+
+else:
+    clean_answer = answer
+
+user_history[user_id].append(
+    {
+        "role": "assistant",
+        "content": clean_answer
+    }
+)
+
+await update.message.reply_text(clean_answer)
+
 
 def main():
 
