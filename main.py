@@ -1,4 +1,3 @@
-```python
 import os
 from telegram import Update
 from telegram.ext import (
@@ -984,4 +983,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
