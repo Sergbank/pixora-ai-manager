@@ -724,14 +724,14 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     answer = response.choices[0].message.content
-
+    print(answer)
     if "[PIXORA_LEAD_READY]" in answer:
 
         await context.bot.send_message(
             chat_id=499657192,
             text=answer
         )
-
+        print("LEAD SENT")
         clean_answer = (
             "Дякую за надану інформацію.\n\n"
             "Я вже сформував попередній опис вашого проєкту та передам його нашому профільному спеціалісту.\n\n"
