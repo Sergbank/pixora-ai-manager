@@ -1,29 +1,92 @@
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+```python
 import os
+from telegram import Update
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters
+)
+from openai import OpenAI
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+SYSTEM_PROMPT = """
+СЮДА ВСТАВЬ ВЕСЬ PIXORA SYSTEM PROMPT
+КОТОРЫЙ Я НАПИСАЛ В ПРЕДЫДУЩЕМ СООБЩЕНИИ
+"""
+
+user_history = {}
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Вітаю 👋\n\nЯ AI-менеджер компанії PIXORA.\n\nЯк до вас звертатися?"
+        "Вітаю 👋\n\n"
+        "Мене звати Андрій.\n"
+        "Я менеджер компанії PIXORA.\n\n"
+        "Як до вас звертатись?"
     )
 
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
+async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    await update.message.reply_text(
-        f"Ви написали:\n\n{text}"
+    user_id = str(update.effective_user.id)
+    user_message = update.message.text
+
+    if user_id not in user_history:
+        user_history[user_id] = []
+
+    user_history[user_id].append(
+        {"role": "user", "content": user_message}
     )
 
+    messages = [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        }
+    ] + user_history[user_id]
 
-app = Application.builder().token(BOT_TOKEN).build()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        temperature=0.8
+    )
 
-app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    answer = response.choices[0].message.content
 
-print("PIXORA BOT STARTED")
+    user_history[user_id].append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
+    )
 
-app.run_polling()
+    await update.message.reply_text(answer)
+
+
+def main():
+
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            chat
+        )
+    )
+
+    print("PIXORA Manager started")
+
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
+```
