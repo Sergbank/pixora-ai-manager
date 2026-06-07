@@ -749,27 +749,23 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(answer)
     if "[PIXORA_LEAD_READY]" in answer:
 
-        await context.bot.send_message(
-            chat_id=499657192,
-            text=answer
-        )
-        print("LEAD SENT")
-        clean_answer = (
-            "Дякую за надану інформацію.\n\n"
-            "Я вже сформував попередній опис вашого проєкту та передам його нашому профільному спеціалісту.\n\n"
-            "З вами зв'яжеться Сергій, який надалі буде супроводжувати проєкт та допоможе узгодити всі деталі безпосередньо.\n\n"
-            "Дякуємо, що звернулися до компанії PIXORA."
-        )
+    lead_text = answer
 
-    else:
-        clean_answer = answer
-
-    user_history[user_id].append(
-        {
-            "role": "assistant",
-            "content": clean_answer
-        }
+    await context.bot.send_message(
+        chat_id=499657192,
+        text=lead_text
     )
+
+    clean_answer = (
+        "Спасибо за предоставленную информацию.\n\n"
+        "Я подготовил предварительное описание вашего проекта.\n\n"
+        "В ближайшее время с вами свяжется специалист PIXORA Сергей.\n\n"
+        "С ним вы сможете обсудить технические детали, сроки реализации и вопросы оплаты.\n\n"
+        "Спасибо за обращение в компанию PIXORA."
+    )
+
+else:
+    clean_answer = answer
 
     await update.message.reply_text(clean_answer)
     
