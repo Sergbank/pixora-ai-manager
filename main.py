@@ -908,8 +908,6 @@ ___ %
 Клієнт повинен бачити звичайне професійне спілкування менеджера компанії PIXORA.
 
 """
-
-```python
 user_history = {}
 
 
@@ -981,4 +979,3 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(clean_answer)
-```
