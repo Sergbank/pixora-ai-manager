@@ -930,7 +930,10 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_history[user_id] = []
 
     user_history[user_id].append(
-        {"role": "user", "content": user_message}
+        {
+            "role": "user",
+            "content": user_message
+        }
     )
 
     messages = [
@@ -946,22 +949,22 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         temperature=0.8
     )
 
-answer = response.choices[0].message.content
+    answer = response.choices[0].message.content
 
-if "[PIXORA_LEAD_READY]" in answer:
-    await context.bot.send_message(
-        chat_id="499657192",
-        text=answer
+    if "[PIXORA_LEAD_READY]" in answer:
+        await context.bot.send_message(
+            chat_id="499657192",
+            text=answer
+        )
+
+    user_history[user_id].append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
     )
 
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": answer
-    }
-)
-
-await update.message.reply_text(answer)
+    await update.message.reply_text(answer)
 
 
 def main():
