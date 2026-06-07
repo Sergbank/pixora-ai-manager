@@ -950,17 +950,13 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     answer = response.choices[0].message.content
 
-    lead_ready = "[PIXORA_LEAD_READY]" in answer
+    if "[PIXORA_LEAD_READY]" in answer:
 
-    if lead_ready:
-
-        # Отправляем полный внутренний отчёт Сергею
         await context.bot.send_message(
-            chat_id="499657192",
+            chat_id=499657192,
             text=answer
         )
 
-        # Клиенту показываем только финальное сообщение
         clean_answer = (
             "Дякую за надану інформацію.\n\n"
             "Я вже сформував попередній опис вашого проєкту та передам його нашому профільному спеціалісту.\n\n"
