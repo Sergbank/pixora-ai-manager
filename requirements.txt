@@ -1,4 +1,2 @@
-```txt
 python-telegram-bot==21.2
 openai>=1.30.0
-```
