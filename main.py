@@ -841,7 +841,12 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     answer = response.choices[0].message.content
+if "[PIXORA_LEAD_READY]" in answer:
 
+    await context.bot.send_message(
+        chat_id="499657192",
+        text=answer
+    )
     user_history[user_id].append(
         {
             "role": "assistant",
