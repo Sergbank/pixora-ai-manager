@@ -949,7 +949,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         temperature=0.8
     )
 
-    answer = response.choices[0].message.content
+answer = response.choices[0].message.content
 
 lead_ready = "[PIXORA_LEAD_READY]" in answer
 
@@ -966,6 +966,18 @@ if lead_ready:
         "З вами зв'яжеться Сергій, який надалі буде супроводжувати проєкт та допоможе узгодити всі деталі безпосередньо.\n\n"
         "Дякуємо, що звернулися до компанії PIXORA."
     )
+
+else:
+    clean_answer = answer
+
+user_history[user_id].append(
+    {
+        "role": "assistant",
+        "content": clean_answer
+    }
+)
+
+await update.message.reply_text(clean_answer)
 
 else:
     clean_answer = answer
