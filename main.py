@@ -10,6 +10,7 @@ from telegram.ext import (
 )
 from openai import OpenAI
 
+COMPANY_WEBSITE = "https://pixora-studio.com/"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
