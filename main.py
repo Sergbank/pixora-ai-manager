@@ -942,7 +942,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ] + user_history[user_id]
 
     response = client.chat.completions.create(
-        model="gpt-5.4-mini",
+        model="gpt-4o-mini",
         messages=messages,
         temperature=0.8
     )
