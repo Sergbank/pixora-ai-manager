@@ -321,26 +321,26 @@ async def start(
         )
 
 async def chat(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-        ):
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
         
-        user_id = str(
-            update.effective_user.id
-        )
+    user_id = str(
+        update.effective_user.id
+    )
         
-        text = (
-            update.message.text or ""
-        ).strip()
+    text = (
+        update.message.text or ""
+    ).strip()
     
     if not text:
         return
     
     if user_id not in user_data:
     
-        state = init_user_state(
+    state = init_user_state(
             user_id
-        )
+    )
     
     else:
     
@@ -348,9 +348,9 @@ async def chat(
     
     if state["step"] == "name":
     
-        state["lang"] = detect_language(
-            text
-        )
+    state["lang"] = detect_language(
+        text
+    )
     
         save_answer(
             state,
@@ -373,18 +373,18 @@ async def chat(
         
         if looks_like_question(text):
         
-            gpt_answer = await ask_gpt(
-                state,
-                text
-            )
+        gpt_answer = await ask_gpt(
+            state,
+            text
+        )
     
         if gpt_answer:
     
-            await update.message.reply_text(
-                gpt_answer
-            )
-    
         await update.message.reply_text(
+            gpt_answer
+        )
+    
+    await update.message.reply_text(
             QUESTIONS[
                 state["lang"]
             ][current_step]
