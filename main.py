@@ -274,69 +274,6 @@ async def send_lead(update, context, user_id):
         text=lead_text
     )
 
-summary = []
-
-if data.get("business"):
-    summary.append(
-        f"Ниша: {data['business']}"
-    )
-
-if data.get("goal"):
-    summary.append(
-        f"Цель: {data['goal']}"
-    )
-
-if data.get("audience"):
-    summary.append(
-        f"ЦА: {data['audience']}"
-    )
-
-if data.get("timeline"):
-    summary.append(
-        f"Сроки: {data['timeline']}"
-    )
-
-brief_summary = "\n".join(summary)
-
-lead_text = (
-    "🔥 НОВЫЙ ЛИД PIXORA\n\n"
-
-    f"Имя:\n"
-    f"{data.get('name', '-')}\n\n"
-
-    f"Бизнес:\n"
-    f"{data.get('business', '-')}\n\n"
-
-    f"Цель сайта:\n"
-    f"{data.get('goal', '-')}\n\n"
-
-    f"Целевая аудитория:\n"
-    f"{data.get('audience', '-')}\n\n"
-
-    f"Примеры сайтов:\n"
-    f"{data.get('examples', '-')}\n\n"
-
-    f"Сроки:\n"
-    f"{data.get('timeline', '-')}\n\n"
-
-    f"Контакт:\n"
-    f"{data.get('contact', '-')}\n\n"
-
-    f"Telegram:\n"
-    f"{username}\n\n"
-
-    f"Telegram ID:\n"
-    f"{update.effective_user.id}\n\n"
-
-    f"КРАТКОЕ РЕЗЮМЕ:\n"
-    f"{brief_summary}"
-)
-
-await context.bot.send_message(
-    chat_id=LEAD_CHAT_ID,
-    text=lead_text
-)
-
 def get_finish_message(lang):
 
     if lang == "uk":
