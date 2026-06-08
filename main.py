@@ -445,14 +445,14 @@ async def chat(
 
     return
 
-current_step = state["step"] 
+    current_step = state["step"] 
 
-if looks_like_question(text):
+    if looks_like_question(text):
 
-    gpt_answer = await ask_gpt(
-        state,
-        text
-    )
+        gpt_answer = await ask_gpt(
+            state,
+            text
+        )
 
     if gpt_answer:
 
@@ -468,11 +468,11 @@ if looks_like_question(text):
 
     return
 
-save_answer(
-    state,
-    current_step,
-    text
-)
+    save_answer(
+        state,
+        current_step,
+        text
+    )
 
 if current_step == "contact":
 
