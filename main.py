@@ -639,7 +639,7 @@ async def chat(
         state["step"] = "business"
         
         await asyncio.sleep(
-            random.uniform(1.5, 4.5)
+            random.uniform(0.5, 1.0)
         )
         
         await update.message.reply_text(
