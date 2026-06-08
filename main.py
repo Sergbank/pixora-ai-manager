@@ -321,15 +321,15 @@ async def start(
         )
 
 async def chat(
-update: Update,
-context: ContextTypes.DEFAULT_TYPE
-):
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
 
-user_id = str(update.effective_user.id)
+    user_id = str(update.effective_user.id)
 
-text = (
-    update.message.text or ""
-).strip()
+    text = (
+        update.message.text or ""
+    ).strip()
 
 if not text:
     return
