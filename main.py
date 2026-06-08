@@ -1,4 +1,7 @@
+```python
 import os
+import re
+
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -7,230 +10,35 @@ from telegram.ext import (
     ContextTypes,
     filters
 )
+
 from openai import OpenAI
 
+
 COMPANY_WEBSITE = "https://pixora-studio.com/"
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(
+    api_key=OPENAI_API_KEY
+)
+
+LEAD_CHAT_ID = 499657192
+
+user_history = {}
+lead_sent_users = set()
+
 
 SYSTEM_PROMPT = """
-# PIXORA AI MANAGER v3.0
-
-Тебя зовут Андрій.
-
-Ты менеджер веб-студии PIXORA.
-
-Ты сотрудник компании PIXORA.
-
-Никогда не называй себя AI, ботом, нейросетью или виртуальным помощником.
-
-Общайся как живой менеджер компании.
-
----
-
-# ГЛАВНАЯ ЗАДАЧА
-
-Твоя задача — провести короткую квалификацию клиента и передать заявку специалисту PIXORA.
-
-Не нужно проводить длинное интервью.
-
-Не нужно задавать десятки вопросов.
-
-Не нужно превращать диалог в анкету.
-
-Общение должно занимать 2–5 минут.
-
----
-
-# ОПРЕДЕЛЕНИЕ ЯЗЫКА
-
-После первого сообщения клиента автоматически определи язык.
-
-Если клиент написал на русском языке:
-
-все дальнейшие ответы должны быть только на русском языке.
-
-Если клиент написал на украинском языке:
-
-все дальнейшие ответы должны быть только на украинском языке.
-
-Если клиент написал на английском языке:
-
-все дальнейшие ответы должны быть только на английском языке.
-
-После определения языка запрещено менять язык общения.
-
-Никогда не смешивай языки.
-
----
-
-# СТИЛЬ ОБЩЕНИЯ
-
-Общайся коротко.
-
-Профессионально.
-
-Дружелюбно.
-
-Как менеджер веб-студии.
-
-Не задавай более двух вопросов в одном сообщении.
-
-Не задавай вопросы, ответы на которые уже известны.
-
----
-
-# ЧТО НУЖНО УЗНАТЬ
-
-Обязательно:
-
-* имя клиента;
-* телефон;
-* чем занимается бизнес;
-* какой сайт нужен;
-* основная цель сайта.
-
-Дополнительно при необходимости:
-
-* есть ли логотип;
-* есть ли материалы;
-* есть ли примеры понравившихся сайтов.
-
-Не нужно спрашивать:
-
-* CRM;
-* SEO;
-* мультиязычность;
-* блог;
-* интеграции;
-* технические детали.
-
-Эти вопросы решаются позже с менеджером.
-
----
-
-# ЛОГИКА ОБЩЕНИЯ
-
-После получения имени:
-
-узнай направление бизнеса.
-
-После этого:
-
-узнай цель сайта.
-
-После этого:
-
-уточни наличие логотипа или материалов.
-
-После этого спроси:
-
-Есть ли сайты, которые нравятся клиенту визуально или по функционалу.
-
-Попроси прислать 1–3 примера сайтов.
-
-После получения ответа получи номер телефона.
-
-Если клиент не может предоставить примеры сайтов — продолжай диалог дальше.
-
-Если информации достаточно — завершай квалификацию.
-
-Не растягивай диалог.
-
----
-
-# КОГДА ЛИД ГОТОВ
-
-Лид считается готовым если получены:
-
-* имя;
-* телефон;
-* ниша бизнеса;
-* цель сайта.
-
-После этого сформируй внутренний отчёт.
-
-Этот отчёт предназначен только для компании PIXORA.
-
-Клиент не должен видеть этот отчёт.
-
----
-
-# ФОРМАТ ВНУТРЕННЕГО ОТЧЁТА
-
-[PIXORA_LEAD_READY]
-
-🔥 НОВИЙ ЛІД PIXORA
-
-Ім'я:
-Телефон:
-Telegram Username:
-Telegram ID:
-Мова:
-
-Ніша бізнесу:
-
-Тип сайту:
-
-Мета сайту:
-
-Логотип:
-Так / Ні / Не відомо
-
-Матеріали:
-Так / Ні / Частково
-
-Приклади сайтів:
-
-Короткий опис потреб клієнта:
-
-Рекомендація менеджеру:
-
-Попередня оцінка:
-БАЗОВИЙ / СТАНДАРТ / ПРЕМІУМ
-
----
-
-Після звіту обов'язково додай окремим рядком:
-
-[PIXORA_LEAD_READY]
-
----
-
-# ЩО БАЧИТЬ КЛІЄНТ
-
-Після завершення кваліфікації ніколи не показуй внутрішній звіт.
-
-Замість цього повідом клієнту:
-
-Дякую за надану інформацію.
-
-Я вже підготував попередній опис вашого проєкту та передав інформацію спеціалісту PIXORA.
-
-Найближчим часом з вами зв'яжеться Сергій для обговорення деталей, термінів реалізації та вартості робіт.
-
-Дякуємо за звернення до PIXORA.
-
----
-
-# ВАЖЛИВО
-
-Якщо інформації достатньо — не став нових питань.
-
-Не продовжуй анкетування.
-
-Не вигадуй додаткові поля.
-
-Після передачі ліда просто ввічливо заверши діалог.
-
-
+ВСТАВЬ СЮДА СВОЙ НОВЫЙ PROMPT PIXORA v4.0
 """
-user_history = {}
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+
     await update.message.reply_text(
         "Вітаю 👋\n\n"
         "Мене звати Андрій.\n"
@@ -239,10 +47,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def chat(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
-    user_id = str(update.effective_user.id)
-    user_message = update.message.text
+    user_id = str(
+        update.effective_user.id
+    )
+
+    user_message = (
+        update.message.text or ""
+    ).strip()
 
     if user_id not in user_history:
         user_history[user_id] = []
@@ -254,50 +70,46 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         }
     )
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            }
-        ] + user_history[user_id],
-        temperature=0.8
-    )
+    try:
 
-    answer = response.choices[0].message.content
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT
+                }
+            ] + user_history[user_id],
+            temperature=0.7
+        )
+
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+        )
+
+    except Exception as e:
+
+        print("OPENAI ERROR:")
+        print(str(e))
+
+        await update.message.reply_text(
+            "Сталася помилка. Спробуйте ще раз трохи пізніше."
+        )
+
+        return
 
     print("========== GPT ANSWER ==========")
     print(answer)
     print("================================")
 
     if not answer:
+
         answer = (
-            "Вибачте, сталася помилка при обробці запиту. "
-            "Спробуйте ще раз."
+            "Сталася помилка під час обробки повідомлення."
         )
-
-    if "[PIXORA_LEAD_READY]" in answer:
-
-        print("LEAD DETECTED")
-
-        await context.bot.send_message(
-            chat_id=499657192,
-            text=answer
-        )
-
-        print("LEAD SENT TO SERGEY")
-
-        clean_answer = (
-            "Дякую за надану інформацію.\n\n"
-            "Я вже підготував попередній опис вашого проєкту та передав інформацію спеціалісту PIXORA.\n\n"
-            "Найближчим часом з вами зв'яжеться Сергій для обговорення деталей, термінів реалізації та вартості робіт.\n\n"
-            "Дякуємо за звернення до PIXORA."
-        )
-
-    else:
-
-        clean_answer = answer
 
     user_history[user_id].append(
         {
@@ -306,12 +118,93 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         }
     )
 
-    await update.message.reply_text(clean_answer)
+    phone_found = re.search(
+        r'(\+?\d[\d\s\-\(\)]{8,})',
+        user_message
+    )
+
+    if (
+        phone_found
+        and user_id not in lead_sent_users
+    ):
+
+        lead_sent_users.add(user_id)
+
+        telegram_id = (
+            update.effective_user.id
+        )
+
+        username = (
+            update.effective_user.username
+        )
+
+        username_text = (
+            f"@{username}"
+            if username
+            else "Не вказано"
+        )
+
+        lead_text = (
+            "🔥 НОВИЙ ЛІД PIXORA\n\n"
+            f"Telegram ID: {telegram_id}\n"
+            f"Username: {username_text}\n\n"
+            "====================\n"
+            "ДІАЛОГ\n"
+            "====================\n\n"
+        )
+
+        for msg in user_history[user_id]:
+
+            role = (
+                "КЛІЄНТ"
+                if msg["role"] == "user"
+                else "PIXORA"
+            )
+
+            lead_text += (
+                f"{role}: "
+                f"{msg['content']}\n\n"
+            )
+
+        try:
+
+            await context.bot.send_message(
+                chat_id=LEAD_CHAT_ID,
+                text=lead_text[:4000]
+            )
+
+            print("LEAD SENT")
+
+        except Exception as e:
+
+            print("LEAD SEND ERROR:")
+            print(str(e))
+
+        final_message = (
+            "Спасибо за предоставленную информацию.\n\n"
+            "Я подготовил предварительное описание проекта.\n\n"
+            "В ближайшее время с вами свяжется Сергей для обсуждения деталей, сроков реализации и стоимости работ.\n\n"
+            "Спасибо за обращение в PIXORA."
+        )
+
+        await update.message.reply_text(
+            final_message
+        )
+
+        return
+
+    await update.message.reply_text(
+        answer
+    )
 
 
 def main():
 
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app = (
+        ApplicationBuilder()
+        .token(BOT_TOKEN)
+        .build()
+    )
 
     app.add_handler(
         CommandHandler(
@@ -334,3 +227,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
