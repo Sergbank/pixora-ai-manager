@@ -369,13 +369,13 @@ def init_user_state(
     text
     ):
 
-user_data[user_id] = {
-    "lang": detect_language(text),
-    "step": "name",
-    "answers": {},
-    "history": [],
-    "lead_sent": False
-}
+    user_data[user_id] = {
+        "lang": detect_language(text),
+        "step": "name",
+        "answers": {},
+        "history": [],
+        "lead_sent": False
+    }
 
 return user_data[user_id]
 
@@ -385,7 +385,7 @@ def save_answer(
     value
     ):
 
-state["answers"][step] = value.strip()
+    state["answers"][step] = value.strip()
 
 def get_current_question(
     state
@@ -410,11 +410,11 @@ def move_to_next_step(
     state
     ):
 
-current_step = state["step"]
-
-next_step = get_next_step(
-    current_step
-)
+    current_step = state["step"]
+    
+    next_step = get_next_step(
+        current_step
+    )
 
 if next_step:
     state["step"] = next_step
@@ -426,13 +426,13 @@ async def chat(
     context: ContextTypes.DEFAULT_TYPE
     ):
 
-user_id = str(
-    update.effective_user.id
-)
-
-text = (
-    update.message.text or ""
-).strip()
+    user_id = str(
+        update.effective_user.id
+    )
+    
+    text = (
+        update.message.text or ""
+    ).strip()
 
 if not text:
     return
