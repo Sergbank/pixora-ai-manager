@@ -10,8 +10,8 @@ ContextTypes,
 filters
 )
 
-BOT_TOKEN = os.getenv BOT_TOKEN
-OPENAI_API_KEY = os.getenv OPENAI_API_KEY
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 LEAD_CHAT_ID = 499657192
 
