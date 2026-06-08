@@ -229,13 +229,50 @@ def looks_like_question(text):
     )
 
 async def send_lead(update, context, user_id):
+
     state = user_data[user_id]
     data = state["answers"]
+
     username = (
         f"@{update.effective_user.username}"
         if update.effective_user.username
         else "Не указан"
-)
+    )
+
+    summary = []
+
+    if data.get("business"):
+        summary.append(f"Ниша: {data['business']}")
+
+    if data.get("goal"):
+        summary.append(f"Цель: {data['goal']}")
+
+    if data.get("audience"):
+        summary.append(f"ЦА: {data['audience']}")
+
+    if data.get("timeline"):
+        summary.append(f"Сроки: {data['timeline']}")
+
+    brief_summary = "\n".join(summary)
+
+    lead_text = (
+        "🔥 НОВЫЙ ЛИД PIXORA\n\n"
+        f"Имя:\n{data.get('name', '-')}\n\n"
+        f"Бизнес:\n{data.get('business', '-')}\n\n"
+        f"Цель сайта:\n{data.get('goal', '-')}\n\n"
+        f"Целевая аудитория:\n{data.get('audience', '-')}\n\n"
+        f"Примеры сайтов:\n{data.get('examples', '-')}\n\n"
+        f"Сроки:\n{data.get('timeline', '-')}\n\n"
+        f"Контакт:\n{data.get('contact', '-')}\n\n"
+        f"Telegram:\n{username}\n\n"
+        f"Telegram ID:\n{update.effective_user.id}\n\n"
+        f"КРАТКОЕ РЕЗЮМЕ:\n{brief_summary}"
+    )
+
+    await context.bot.send_message(
+        chat_id=LEAD_CHAT_ID,
+        text=lead_text
+    )
 
 summary = []
 
