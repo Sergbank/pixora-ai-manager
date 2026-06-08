@@ -388,7 +388,7 @@ def move_to_next_step(
     
     next_step = get_next_step(
         current_step
-    )
+    ):
 
     if next_step:
         state["step"] = next_step
