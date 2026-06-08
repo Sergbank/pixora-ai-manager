@@ -254,38 +254,36 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         }
     )
 
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        }
-    ] + user_history[user_id]
-
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=messages,
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            }
+        ] + user_history[user_id],
         temperature=0.8
     )
 
     answer = response.choices[0].message.content
+
     print("========== GPT ANSWER ==========")
     print(answer)
     print("================================")
+
     if not answer:
         answer = (
             "Вибачте, сталася помилка при обробці запиту. "
             "Спробуйте ще раз."
         )
 
-        if "[PIXORA_LEAD_READY]" in answer:
+    if "[PIXORA_LEAD_READY]" in answer:
 
         print("LEAD DETECTED")
 
-        lead_text = answer
-
         await context.bot.send_message(
             chat_id=499657192,
-            text=lead_text
+            text=answer
         )
 
         print("LEAD SENT TO SERGEY")
@@ -299,16 +297,6 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     else:
 
-        clean_answer = answer = (
-            "Дякую за надану інформацію.\n\n"
-            "Я вже сформував попередній опис вашого проєкту.\n\n"
-            "Найближчим часом з вами зв'яжеться спеціаліст PIXORA Сергій.\n\n"
-            "З ним ви зможете обговорити технічні деталі, "
-            "терміни реалізації та питання оплати.\n\n"
-            "Дякуємо за звернення до компанії PIXORA."
-        )
-
-    else:
         clean_answer = answer
 
     user_history[user_id].append(
