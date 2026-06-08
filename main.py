@@ -568,6 +568,7 @@ await update.message.reply_text(
         state["lang"]
     ][next_step]
 )
+
 def main():
 
     app = (
@@ -575,14 +576,14 @@ def main():
         .token(BOT_TOKEN)
         .build()
     )
-    
+
     app.add_handler(
         CommandHandler(
             "start",
             start
         )
     )
-    
+
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
@@ -590,12 +591,8 @@ def main():
         )
     )
 
-print(
-    "PIXORA AI Manager started"
-)
+    print(
+        "PIXORA AI Manager started"
+    )
 
-app.run_polling()
-
-if __name__ == "__main__":
-    main()
-
+    app.run_polling()
