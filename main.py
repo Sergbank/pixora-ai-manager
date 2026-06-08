@@ -501,21 +501,21 @@ async def chat(
     if not next_step:
         return
 
-answer_value = text
-
-if current_step == "business":
-
-    prompt = (
-        f"Клієнт написав свою нішу: "
-        f"{answer_value}\n\n"
-        f"Дай коротку професійну відповідь "
-        f"одним реченням без нових питань."
-    )
-
-    reply = await ask_gpt(
-        state,
-        prompt
-    )
+    answer_value = text
+    
+    if current_step == "business":
+    
+        prompt = (
+            f"Клієнт написав свою нішу: "
+            f"{answer_value}\n\n"
+            f"Дай коротку професійну відповідь "
+            f"одним реченням без нових питань."
+        )
+    
+        reply = await ask_gpt(
+            state,
+            prompt
+        )
 
     if reply:
 
