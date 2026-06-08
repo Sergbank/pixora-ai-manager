@@ -98,7 +98,7 @@ user_data = {}
 
 def detect_language(text):
 
-text = text.lower()
+    text = text.lower()
 
 if any(ch in text for ch in "іїєґ"):
     return "uk"
@@ -118,7 +118,7 @@ return "ru"
 
 def get_next_step(step):
 
-current_index = STEPS.index(step)
+    current_index = STEPS.index(step)
 
 if current_index >= len(STEPS) - 1:
     return None
@@ -127,41 +127,41 @@ return STEPS[current_index + 1]
 
 def save_answer(state, step, value):
 
-state["answers"][step] = value.strip()
+    state["answers"][step] = value.strip()
 
 def init_user_state(user_id):
 
-user_data[user_id] = {
-    "lang": "uk",
-    "step": "name",
-    "answers": {},
-    "history": [],
-    "lead_sent": False
-}
+    user_data[user_id] = {
+        "lang": "uk",
+        "step": "name",
+        "answers": {},
+        "history": [],
+        "lead_sent": False
+    }
 
 return user_data[user_id]
 
 def looks_like_question(text):
 
-text = text.lower().strip()
-
-if "?" in text:
-    return True
-
-starters = [
-    "сколько",
-    "стоимость",
-    "цена",
-    "ціна",
-    "вартість",
-    "как",
-    "як",
-    "what",
-    "when",
-    "where",
-    "why",
-    "price",
-    "cost"
+    text = text.lower().strip()
+    
+    if "?" in text:
+        return True
+    
+    starters = [
+        "сколько",
+        "стоимость",
+        "цена",
+        "ціна",
+        "вартість",
+        "как",
+        "як",
+        "what",
+        "when",
+        "where",
+        "why",
+        "price",
+        "cost"
 ]
 
 return any(
@@ -256,39 +256,39 @@ await context.bot.send_message(
 
 def get_finish_message(lang):
 
-if lang == "uk":
+    if lang == "uk":
+        return (
+            "Дякую за надану інформацію.\n\n"
+            "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
+            "Після аналізу заявки ми зв'яжемося з вами."
+        )
+    
+    if lang == "en":
+        return (
+            "Thank you for the information.\n\n"
+            "Your brief has been successfully submitted.\n\n"
+            "A PIXORA specialist will contact you after reviewing the request."
+        )
+    
     return (
-        "Дякую за надану інформацію.\n\n"
-        "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
-        "Після аналізу заявки ми зв'яжемося з вами."
+        "Спасибо за предоставленную информацию.\n\n"
+        "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
+        "После анализа заявки мы свяжемся с вами."
     )
-
-if lang == "en":
-    return (
-        "Thank you for the information.\n\n"
-        "Your brief has been successfully submitted.\n\n"
-        "A PIXORA specialist will contact you after reviewing the request."
-    )
-
-return (
-    "Спасибо за предоставленную информацию.\n\n"
-    "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
-    "После анализа заявки мы свяжемся с вами."
-)
 
 def get_name_reply(lang, name):
 
-if lang == "uk":
-    return (
-        f"Дякую, {name}.\n\n"
-        f"{QUESTIONS['uk']['business']}"
-    )
-
-if lang == "en":
-    return (
-        f"Thank you, {name}.\n\n"
-        f"{QUESTIONS['en']['business']}"
-    )
+    if lang == "uk":
+        return (
+            f"Дякую, {name}.\n\n"
+            f"{QUESTIONS['uk']['business']}"
+        )
+    
+    if lang == "en":
+        return (
+            f"Thank you, {name}.\n\n"
+            f"{QUESTIONS['en']['business']}"
+        )
 
 return (
     f"Спасибо, {name}.\n\n"
@@ -296,21 +296,21 @@ return (
 )
 
 async def start(
-update: Update,
-context: ContextTypes.DEFAULT_TYPE
-):
-
-user_id = str(
-    update.effective_user.id
-)
-
-user_data[user_id] = {
-    "lang": "uk",
-    "step": "name",
-    "answers": {},
-    "history": [],
-    "lead_sent": False
-}
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
+    
+    user_id = str(
+        update.effective_user.id
+    )
+    
+    user_data[user_id] = {
+        "lang": "uk",
+        "step": "name",
+        "answers": {},
+        "history": [],
+        "lead_sent": False
+    }
 
 await update.message.reply_text(
     "Вітаю.\n\n"
@@ -320,17 +320,17 @@ await update.message.reply_text(
 )
 
 async def chat(
-update: Update,
-context: ContextTypes.DEFAULT_TYPE
-):
-
-user_id = str(
-    update.effective_user.id
-)
-
-text = (
-    update.message.text or ""
-).strip()
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
+    
+    user_id = str(
+        update.effective_user.id
+    )
+    
+    text = (
+        update.message.text or ""
+    ).strip()
 
 if not text:
     return
@@ -482,46 +482,46 @@ await update.message.reply_text(
 
 def main():
 
-if not BOT_TOKEN:
-    raise ValueError(
-        "BOT_TOKEN not found"
+    if not BOT_TOKEN:
+        raise ValueError(
+            "BOT_TOKEN not found"
+        )
+    
+    if not OPENAI_API_KEY:
+        raise ValueError(
+            "OPENAI_API_KEY not found"
+        )
+    
+    application = (
+        ApplicationBuilder()
+        .token(BOT_TOKEN)
+        .build()
+    )
+    
+    application.add_handler(
+        CommandHandler(
+            "start",
+            start
+        )
     )
 
-if not OPENAI_API_KEY:
-    raise ValueError(
-        "OPENAI_API_KEY not found"
+    application.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            chat
+        )
+    )
+    
+    print(
+        "PIXORA AI Manager started"
+    )
+    
+    application.run_polling(
+        drop_pending_updates=True
     )
 
-application = (
-    ApplicationBuilder()
-    .token(BOT_TOKEN)
-    .build()
-)
-
-application.add_handler(
-    CommandHandler(
-        "start",
-        start
-    )
-)
-
-application.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        chat
-    )
-)
-
-print(
-    "PIXORA AI Manager started"
-)
-
-application.run_polling(
-    drop_pending_updates=True
-)
-
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        main()
 
 
     return None
