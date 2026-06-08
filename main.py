@@ -108,7 +108,7 @@ QUESTIONS = {
 }
 
 def detect_language(text):
-text = text.lower()
+    text = text.lower()
 
 if any(ch in text for ch in "іїєґ"):
     return "uk"
