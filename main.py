@@ -291,10 +291,10 @@ def get_name_reply(lang, name):
             f"{QUESTIONS['en']['business']}"
         )
 
-return (
-    f"Спасибо, {name}.\n\n"
-    f"{QUESTIONS['ru']['business']}"
-)
+    return (
+        f"Спасибо, {name}.\n\n"
+        f"{QUESTIONS['ru']['business']}"
+    )
 
 async def start(
     update: Update,
