@@ -674,9 +674,10 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     answer = response.choices[0].message.content
 
-    if not answer:
+if not answer:
     answer = "Вибачте, сталася помилка при обробці запиту. Спробуйте ще раз."
-    if "[PIXORA_LEAD_READY]" in answer:
+
+if "[PIXORA_LEAD_READY]" in answer:
 
     lead_text = answer
 
@@ -694,6 +695,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 else:
+
     clean_answer = answer
 
 user_history[user_id].append(
