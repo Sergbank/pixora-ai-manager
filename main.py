@@ -325,7 +325,6 @@ update: Update,
 context: ContextTypes.DEFAULT_TYPE
 ):
 
-```
 user_id = str(update.effective_user.id)
 
 text = (
