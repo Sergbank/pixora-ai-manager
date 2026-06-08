@@ -369,14 +369,14 @@ async def start(
     
         return
     
-    current_step = state["step"]
-    
-    if looks_like_question(text):
-    
-        gpt_answer = await ask_gpt(
-            state,
-            text
-        )
+        current_step = state["step"]
+        
+        if looks_like_question(text):
+        
+            gpt_answer = await ask_gpt(
+                state,
+                text
+            )
     
         if gpt_answer:
     
@@ -392,13 +392,13 @@ async def start(
     
         return
     
-    save_answer(
-        state,
-        current_step,
-        text
-    )
-    
-    if current_step == "contact":
+        save_answer(
+            state,
+            current_step,
+            text
+        )
+        
+        if current_step == "contact":
     
         if not state["lead_sent"]:
     
@@ -418,68 +418,68 @@ async def start(
 
         return
     
-    next_step = get_next_step(
-        current_step
-    )
+        next_step = get_next_step(
+            current_step
+        )
+        
+        if not next_step:
+            return
+        
+        state["step"] = next_step
     
-    if not next_step:
-        return
+        reply = None
+
+    if current_step == "business":
     
-    state["step"] = next_step
-
-reply = None
-
-if current_step == "business":
-
-    reply = await ask_gpt(
+        reply = await ask_gpt(
+                state,
+                f"Клієнт написав про свій бізнес: {text}. "
+                f"Коротко підтвердь отримання інформації."
+            )    
+    
+    elif current_step == "goal":
+    
+        reply = await ask_gpt(
             state,
-            f"Клієнт написав про свій бізнес: {text}. "
+            f"Клієнт описав ціль сайту: {text}. "
             f"Коротко підтвердь отримання інформації."
-        )    
-
-elif current_step == "goal":
-
-    reply = await ask_gpt(
-        state,
-        f"Клієнт описав ціль сайту: {text}. "
-        f"Коротко підтвердь отримання інформації."
-    )
-
-elif current_step == "audience":
-
-    reply = await ask_gpt(
-        state,
-        f"Клієнт описав аудиторію: {text}. "
-        f"Коротко підтвердь отримання інформації."
-    )
-
-elif current_step == "examples":
-
-    reply = await ask_gpt(
-        state,
-        f"Клієнт надав приклади сайтів: {text}. "
-        f"Коротко підтвердь отримання інформації."
-    )
-
-elif current_step == "timeline":
-
-    reply = await ask_gpt(
-        state,
-        f"Клієнт повідомив строки запуску: {text}. "
-        f"Коротко підтвердь отримання інформації."
-    )
-
-if reply:
-
+        )
+    
+    elif current_step == "audience":
+    
+        reply = await ask_gpt(
+            state,
+            f"Клієнт описав аудиторію: {text}. "
+            f"Коротко підтвердь отримання інформації."
+        )
+    
+    elif current_step == "examples":
+    
+        reply = await ask_gpt(
+            state,
+            f"Клієнт надав приклади сайтів: {text}. "
+            f"Коротко підтвердь отримання інформації."
+        )
+    
+    elif current_step == "timeline":
+    
+        reply = await ask_gpt(
+            state,
+            f"Клієнт повідомив строки запуску: {text}. "
+            f"Коротко підтвердь отримання інформації."
+        )
+    
+    if reply:
+    
+        await update.message.reply_text(
+            reply
+        )
+    
     await update.message.reply_text(
-        reply
+        QUESTIONS[
+            state["lang"]
+        ][next_step]
     )
-
-await update.message.reply_text(
-    QUESTIONS[
-        state["lang"]
-    ][next_step]
-)
 
 def main():
 
