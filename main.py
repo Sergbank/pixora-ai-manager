@@ -114,7 +114,7 @@ def detect_language(text):
     if latin_count > max(1, len(text) * 0.5):
         return "en"
 
-return "ru"
+    return "ru"
 
 def get_next_step(step):
 
@@ -139,7 +139,7 @@ def init_user_state(user_id):
         "lead_sent": False
     }
 
-return user_data[user_id]
+    return user_data[user_id]
 
 def looks_like_question(text):
 
