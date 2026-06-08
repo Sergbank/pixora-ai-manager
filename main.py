@@ -314,7 +314,7 @@ def get_name_reply(lang, name):
         f"Спасибо, {name}.\n\n"
         f"{QUESTIONS['ru']['business']}"
     )
-    async def start(
+async def start(
         update: Update,
         context: ContextTypes.DEFAULT_TYPE
         ):
