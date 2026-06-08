@@ -321,165 +321,152 @@ async def start(
         )
 
 async def chat(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-    ):
-        
-    user_id = str(
-        update.effective_user.id
-    )
-        
-    text = (
-        update.message.text or ""
-    ).strip()
-    
+update: Update,
+context: ContextTypes.DEFAULT_TYPE
+):
+
+```
+user_id = str(update.effective_user.id)
+
+text = (
+    update.message.text or ""
+).strip()
+
 if not text:
     return
-    
-    if user_id not in user_data:
-    
-    state = init_user_state(
-            user_id
-    )
-    
-    else:
-    
-        state = user_data[user_id]
-    
-    if state["step"] == "name":
-    
-    state["lang"] = detect_language(
+
+if user_id not in user_data:
+    state = init_user_state(user_id)
+else:
+    state = user_data[user_id]
+
+if state["step"] == "name":
+
+    state["lang"] = detect_language(text)
+
+    save_answer(
+        state,
+        "name",
         text
     )
-    
-        save_answer(
-            state,
-            "name",
-            text
-        )
 
-        state["step"] = "business"
-    
-        await update.message.reply_text(
-            get_name_reply(
-                state["lang"],
-                text
-            )
-        )
-    
-        return
-    
-        current_step = state["step"]
-        
-        if looks_like_question(text):
-        
-        gpt_answer = await ask_gpt(
-            state,
-            text
-        )
-    
-        if gpt_answer:
-    
-        await update.message.reply_text(
-            gpt_answer
-        )
-    
+    state["step"] = "business"
+
     await update.message.reply_text(
-            QUESTIONS[
-                state["lang"]
-            ][current_step]
-        )
-    
-        return
-    
-        save_answer(
-            state,
-            current_step,
+        get_name_reply(
+            state["lang"],
             text
         )
-        
-        if current_step == "contact":
-    
-            if not state["lead_sent"]:
-        
-                state["lead_sent"] = True
-        
-                await send_lead(
-                    update,
-                    context,
-                    user_id
-                )
-        
-            await update.message.reply_text(
-                get_finish_message(
-                    state["lang"]
-                )
-            )
+    )
 
-            return
-    
-        next_step = get_next_step(
-            current_step
-        )
-        
-        if not next_step:
-            return
-        
-        state["step"] = next_step
-    
-        reply = None
+    return
 
-    if current_step == "business":
-    
-        reply = await ask_gpt(
-                state,
-                f"Клієнт написав про свій бізнес: {text}. "
-                f"Коротко підтвердь отримання інформації."
-            )    
-    
-    elif current_step == "goal":
-    
-        reply = await ask_gpt(
-            state,
-            f"Клієнт описав ціль сайту: {text}. "
-            f"Коротко підтвердь отримання інформації."
-        )
-    
-    elif current_step == "audience":
-    
-        reply = await ask_gpt(
-            state,
-            f"Клієнт описав аудиторію: {text}. "
-            f"Коротко підтвердь отримання інформації."
-        )
-    
-    elif current_step == "examples":
-    
-        reply = await ask_gpt(
-            state,
-            f"Клієнт надав приклади сайтів: {text}. "
-            f"Коротко підтвердь отримання інформації."
-        )
-    
-    elif current_step == "timeline":
-    
-        reply = await ask_gpt(
-            state,
-            f"Клієнт повідомив строки запуску: {text}. "
-            f"Коротко підтвердь отримання інформації."
-        )
-    
-    if reply:
-    
+current_step = state["step"]
+
+if looks_like_question(text):
+
+    answer = await ask_gpt(
+        state,
+        text
+    )
+
+    if answer:
+
         await update.message.reply_text(
-            reply
+            answer
         )
-    
+
     await update.message.reply_text(
         QUESTIONS[
             state["lang"]
-        ][next_step]
-    )    
+        ][current_step]
+    )
+
+    return
+
+save_answer(
+    state,
+    current_step,
+    text
+)
+
+if current_step == "contact":
+
+    if not state["lead_sent"]:
+
+        state["lead_sent"] = True
+
+        await send_lead(
+            update,
+            context,
+            user_id
+        )
+
+    await update.message.reply_text(
+        get_finish_message(
+            state["lang"]
+        )
+    )
+
+    return
+
+next_step = get_next_step(
+    current_step
+)
+
+if not next_step:
+    return
+
+state["step"] = next_step
+
+reply = None
+
+if current_step == "business":
+
+    reply = await ask_gpt(
+        state,
+        f"Клієнт написав про свій бізнес: {text}. Коротко підтвердь отримання інформації."
+    )
+
+elif current_step == "goal":
+
+    reply = await ask_gpt(
+        state,
+        f"Клієнт описав ціль сайту: {text}. Коротко підтвердь отримання інформації."
+    )
+
+elif current_step == "audience":
+
+    reply = await ask_gpt(
+        state,
+        f"Клієнт описав аудиторію: {text}. Коротко підтвердь отримання інформації."
+    )
+
+elif current_step == "examples":
+
+    reply = await ask_gpt(
+        state,
+        f"Клієнт надав приклади сайтів: {text}. Коротко підтвердь отримання інформації."
+    )
+
+elif current_step == "timeline":
+
+    reply = await ask_gpt(
+        state,
+        f"Клієнт повідомив строки запуску: {text}. Коротко підтвердь отримання інформації."
+    )
+
+if reply:
+
+    await update.message.reply_text(
+        reply
+    )
+
+await update.message.reply_text(
+    QUESTIONS[
+        state["lang"]
+    ][next_step]
+)   
 
 def main():
 
