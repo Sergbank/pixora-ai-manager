@@ -125,7 +125,7 @@ def get_next_step(step):
     
     return STEPS[current_index + 1]
     
-    def save_answer(state, step, value):
+def save_answer(state, step, value):
     
         state["answers"][step] = value.strip()
 
