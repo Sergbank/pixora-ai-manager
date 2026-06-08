@@ -402,7 +402,7 @@ async def chat(
 
     user_id = str(
         update.effective_user.id
-    ):
+    )
     
     text = (
         update.message.text or ""
