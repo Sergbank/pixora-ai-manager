@@ -523,19 +523,19 @@ async def chat(
             reply
         )
 
-elif current_step == "goal":
-
-    prompt = (
-        f"Клієнт описав мету сайту: "
-        f"{answer_value}\n\n"
-        f"Коротко підтвердь що інформацію "
-        f"отримано без нових питань."
-    )
-
-    reply = await ask_gpt(
-        state,
-        prompt
-    )
+    elif current_step == "goal":
+    
+        prompt = (
+            f"Клієнт описав мету сайту: "
+            f"{answer_value}\n\n"
+            f"Коротко підтвердь що інформацію "
+            f"отримано без нових питань."
+        )
+    
+        reply = await ask_gpt(
+            state,
+            prompt
+        )
 
     if reply:
 
@@ -543,19 +543,19 @@ elif current_step == "goal":
             reply
         )
 
-elif current_step == "audience":
-
-    prompt = (
-        f"Клієнт описав цільову аудиторію: "
-        f"{answer_value}\n\n"
-        f"Коротко підтвердь отримання "
-        f"інформації."
-    )
-
-    reply = await ask_gpt(
-        state,
-        prompt
-    )
+    elif current_step == "audience":
+    
+        prompt = (
+            f"Клієнт описав цільову аудиторію: "
+            f"{answer_value}\n\n"
+            f"Коротко підтвердь отримання "
+            f"інформації."
+        )
+    
+        reply = await ask_gpt(
+            state,
+            prompt
+        )
 
     if reply:
 
@@ -563,11 +563,11 @@ elif current_step == "audience":
             reply
         )
 
-await update.message.reply_text(
-    QUESTIONS[
-        state["lang"]
-    ][next_step]
-)
+    await update.message.reply_text(
+        QUESTIONS[
+            state["lang"]
+        ][next_step]
+    )
 
 def main():
 
