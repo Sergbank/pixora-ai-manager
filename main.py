@@ -345,17 +345,17 @@ def get_name_reply(lang, name):
         context: ContextTypes.DEFAULT_TYPE
         ):
     
-    user_id = str(
-        update.effective_user.id
-    )
-    
-    user_data[user_id] = {
-        "lang": "uk",
-        "step": "name",
-        "answers": {},
-        "history": [],
-        "lead_sent": False
-    }
+        user_id = str(
+            update.effective_user.id
+        )
+        
+        user_data[user_id] = {
+            "lang": "uk",
+            "step": "name",
+            "answers": {},
+            "history": [],
+            "lead_sent": False
+        }
     
     await update.message.reply_text(
         "Вітаю.\n\n"
