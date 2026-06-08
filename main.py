@@ -450,17 +450,17 @@ async def chat(
     
     if state["step"] == "name":
     
-    state["lang"] = detect_language(
-        text
-    )
-
-    save_answer(
-        state,
-        "name",
-        text
-    )
-
-    state["step"] = "business"
+        state["lang"] = detect_language(
+            text
+        )
+    
+        save_answer(
+            state,
+            "name",
+            text
+        )
+    
+        state["step"] = "business"
 
     await update.message.reply_text(
         get_name_reply(
