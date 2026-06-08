@@ -331,12 +331,12 @@ def get_name_reply(lang, name):
             "lead_sent": False
         }
     
-    await update.message.reply_text(
-        "Вітаю.\n\n"
-        "Мене звати Андрій.\n"
-        "Я менеджер студії PIXORA.\n\n"
-        "Як до вас звертатися?"
-    )
+        await update.message.reply_text(
+            "Вітаю.\n\n"
+            "Мене звати Андрій.\n"
+            "Я менеджер студії PIXORA.\n\n"
+            "Як до вас звертатися?"
+        )
 
 def init_user_state(
     user_id,
@@ -351,7 +351,7 @@ def init_user_state(
         "lead_sent": False
     }
 
-return user_data[user_id]
+    return user_data[user_id]
 
 def save_answer(
     state,
@@ -369,7 +369,7 @@ def get_current_question(
     
     step = state["step"]
 
-return QUESTIONS[lang][step]
+    return QUESTIONS[lang][step]
 
 def is_brief_finished(
     state
