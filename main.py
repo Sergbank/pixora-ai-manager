@@ -125,9 +125,15 @@ SYSTEM_PROMPT = """
 
 уточни наличие логотипа или материалов.
 
-После этого:
+После этого спроси:
 
-получи номер телефона.
+Есть ли сайты, которые нравятся клиенту визуально или по функционалу.
+
+Попроси прислать 1–3 примера сайтов.
+
+После получения ответа получи номер телефона.
+
+Если клиент не может предоставить примеры сайтов — продолжай диалог дальше.
 
 Если информации достаточно — завершай квалификацию.
 
@@ -262,7 +268,9 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     answer = response.choices[0].message.content
-
+    print("========== GPT ANSWER ==========")
+    print(answer)
+    print("================================")
     if not answer:
         answer = (
             "Вибачте, сталася помилка при обробці запиту. "
@@ -271,12 +279,16 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if "[PIXORA_LEAD_READY]" in answer:
 
-        lead_text = answer
+    print("LEAD DETECTED")
 
-        await context.bot.send_message(
-            chat_id=499657192,
-            text=lead_text
-        )
+    lead_text = answer
+
+    await context.bot.send_message(
+        chat_id=499657192,
+        text=lead_text
+    )
+
+    print("LEAD SENT TO SERGEY")
 
         clean_answer = (
             "Дякую за надану інформацію.\n\n"
