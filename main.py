@@ -302,67 +302,67 @@ await context.bot.send_message(
 
 def get_finish_message(lang):
 
-if lang == "uk":
-    return (
-        "Дякую за інформацію.\n\n"
-        "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
-        "Після аналізу інформації ми зв'яжемося з вами для обговорення деталей проєкту."
-    )
-
-if lang == "en":
-    return (
-        "Thank you for the information.\n\n"
-        "Your brief has been successfully submitted to the PIXORA team.\n\n"
-        "After reviewing the information, we will contact you to discuss the project details."
-    )
-
-    return (
-        "Спасибо за информацию.\n\n"
-        "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
-        "После анализа информации мы свяжемся с вами для обсуждения деталей проекта."
-    )
+    if lang == "uk":
+        return (
+            "Дякую за інформацію.\n\n"
+            "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
+            "Після аналізу інформації ми зв'яжемося з вами для обговорення деталей проєкту."
+        )
+    
+    if lang == "en":
+        return (
+            "Thank you for the information.\n\n"
+            "Your brief has been successfully submitted to the PIXORA team.\n\n"
+            "After reviewing the information, we will contact you to discuss the project details."
+        )
+    
+        return (
+            "Спасибо за информацию.\n\n"
+            "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
+            "После анализа информации мы свяжемся с вами для обсуждения деталей проекта."
+        )
 
 def get_name_reply(lang, name):
 
-if lang == "uk":
+    if lang == "uk":
+        return (
+            f"Дякую, {name}.\n\n"
+            f"{QUESTIONS['uk']['business']}"
+        )
+    
+    if lang == "en":
+        return (
+            f"Thank you, {name}.\n\n"
+            f"{QUESTIONS['en']['business']}"
+        )
+    
     return (
-        f"Дякую, {name}.\n\n"
-        f"{QUESTIONS['uk']['business']}"
+        f"Спасибо, {name}.\n\n"
+        f"{QUESTIONS['ru']['business']}"
     )
-
-if lang == "en":
-    return (
-        f"Thank you, {name}.\n\n"
-        f"{QUESTIONS['en']['business']}"
+    async def start(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+        ):
+    
+    user_id = str(
+        update.effective_user.id
     )
-
-return (
-    f"Спасибо, {name}.\n\n"
-    f"{QUESTIONS['ru']['business']}"
-)
-async def start(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-    ):
-
-user_id = str(
-    update.effective_user.id
-)
-
-user_data[user_id] = {
-    "lang": "uk",
-    "step": "name",
-    "answers": {},
-    "history": [],
-    "lead_sent": False
-}
-
-await update.message.reply_text(
-    "Вітаю.\n\n"
-    "Мене звати Андрій.\n"
-    "Я менеджер студії PIXORA.\n\n"
-    "Як до вас звертатися?"
-)
+    
+    user_data[user_id] = {
+        "lang": "uk",
+        "step": "name",
+        "answers": {},
+        "history": [],
+        "lead_sent": False
+    }
+    
+    await update.message.reply_text(
+        "Вітаю.\n\n"
+        "Мене звати Андрій.\n"
+        "Я менеджер студії PIXORA.\n\n"
+        "Як до вас звертатися?"
+    )
 
 def init_user_state(
     user_id,
