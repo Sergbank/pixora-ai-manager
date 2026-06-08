@@ -407,11 +407,25 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Остальные шаги
 
-    current_step = state["step"]
-
-    state["answers"][current_step] = text
-
-    current_index = STEPS.index(current_step)
+        current_step = state["step"]
+    
+        state["answers"][current_step] = text
+    
+        current_index = STEPS.index(current_step)
+    
+        next_step = STEPS[current_index + 1]
+    
+        state["step"] = next_step
+        
+        name = state["answers"].get(
+            "name",
+            ""
+        )
+        
+        await update.message.reply_text(
+            f"{transition(state['lang'], name)}\n\n"
+            f"{QUESTIONS[state['lang']][next_step]}"
+        )
 
     # Последний шаг
 
