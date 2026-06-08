@@ -127,8 +127,7 @@ if len(text) > 0 and latin_count > len(text) * 0.6:
 return "ru"
 
 def get_next_step(step):
-
-current_index = STEPS.index(step)
+    current_index = STEPS.index(step)
 
 if current_index >= len(STEPS) - 1:
     return None
@@ -199,8 +198,7 @@ except Exception as e:
     return None
 
 def looks_like_question(text):
-
-text = text.lower()
+    text = text.lower()
 
 triggers = [
     "?",
@@ -231,15 +229,12 @@ return any(
 )
 
 async def send_lead(update, context, user_id):
-
-state = user_data[user_id]
-
-data = state["answers"]
-
-username = (
-    f"@{update.effective_user.username}"
-    if update.effective_user.username
-    else "Не указан"
+    state = user_data[user_id]
+    data = state["answers"]
+    username = (
+        f"@{update.effective_user.username}"
+        if update.effective_user.username
+        else "Не указан"
 )
 
 summary = []
@@ -308,7 +303,6 @@ await context.bot.send_message(
 def get_finish_message(lang):
 
 if lang == "uk":
-
     return (
         "Дякую за інформацію.\n\n"
         "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
@@ -316,18 +310,17 @@ if lang == "uk":
     )
 
 if lang == "en":
-
     return (
         "Thank you for the information.\n\n"
         "Your brief has been successfully submitted to the PIXORA team.\n\n"
         "After reviewing the information, we will contact you to discuss the project details."
     )
 
-return (
-    "Спасибо за информацию.\n\n"
-    "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
-    "После анализа информации мы свяжемся с вами для обсуждения деталей проекта."
-)
+    return (
+        "Спасибо за информацию.\n\n"
+        "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
+        "После анализа информации мы свяжемся с вами для обсуждения деталей проекта."
+    )
 
 def get_name_reply(lang, name):
 
@@ -348,9 +341,9 @@ return (
     f"{QUESTIONS['ru']['business']}"
 )
 async def start(
-update: Update,
-context: ContextTypes.DEFAULT_TYPE
-):
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
 
 user_id = str(
     update.effective_user.id
@@ -372,9 +365,9 @@ await update.message.reply_text(
 )
 
 def init_user_state(
-user_id,
-text
-):
+    user_id,
+    text
+    ):
 
 user_data[user_id] = {
     "lang": detect_language(text),
@@ -387,26 +380,26 @@ user_data[user_id] = {
 return user_data[user_id]
 
 def save_answer(
-state,
-step,
-value
-):
+    state,
+    step,
+    value
+    ):
 
 state["answers"][step] = value.strip()
 
 def get_current_question(
-state
-):
-
-lang = state["lang"]
-
-step = state["step"]
+    state
+    ):
+    
+    lang = state["lang"]
+    
+    step = state["step"]
 
 return QUESTIONS[lang][step]
 
 def is_brief_finished(
-state
-):
+    state
+    ):
 
 return (
     state["step"] == "contact"
@@ -414,8 +407,8 @@ return (
 )
 
 def move_to_next_step(
-state
-):
+    state
+    ):
 
 current_step = state["step"]
 
@@ -424,15 +417,14 @@ next_step = get_next_step(
 )
 
 if next_step:
-
     state["step"] = next_step
 
 return next_step
 
 async def chat(
-update: Update,
-context: ContextTypes.DEFAULT_TYPE
-):
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+    ):
 
 user_id = str(
     update.effective_user.id
@@ -457,7 +449,7 @@ else:
     state = user_data[user_id]
 
 if state["step"] == "name":
-
+    
     state["lang"] = detect_language(
         text
     )
@@ -604,25 +596,25 @@ await update.message.reply_text(
 )
 def main():
 
-app = (
-    ApplicationBuilder()
-    .token(BOT_TOKEN)
-    .build()
-)
-
-app.add_handler(
-    CommandHandler(
-        "start",
-        start
+    app = (
+        ApplicationBuilder()
+        .token(BOT_TOKEN)
+        .build()
     )
-)
-
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        chat
+    
+    app.add_handler(
+        CommandHandler(
+            "start",
+            start
+        )
     )
-)
+    
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            chat
+        )
+    )
 
 print(
     "PIXORA AI Manager started"
