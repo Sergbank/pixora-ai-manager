@@ -480,11 +480,11 @@ if current_step == "contact":
 
         state["lead_sent"] = True
 
-        await send_lead(
-            update,
-            context,
-            user_id
-        )
+    await send_lead(
+        update,
+        context,
+        user_id
+    )
 
     await update.message.reply_text(
         get_finish_message(
