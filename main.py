@@ -333,8 +333,8 @@ async def chat(
         update.message.text or ""
     ).strip()
     
-    if not text:
-        return
+if not text:
+    return
     
     if user_id not in user_data:
     
