@@ -534,22 +534,25 @@ def get_finish_message(lang):
 
     if lang == "uk":
         return (
-            "Дякую за надану інформацію.\n\n"
-            "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
-            "Після аналізу заявки ми зв'яжемося з вами."
+            "Дякуємо за надану інформацію.\n\n"
+            "Ваш бриф успішно передано спеціалісту PIXORA Сергію +380974537174, @pixora_studio_com.\n\n"
+            "Після ознайомлення з проєктом Сергій зв'яжеться з вами особисто, щоб обговорити деталі, відповісти на запитання та узгодити подальші кроки.\n\n"
+            "До зв'язку."
         )
     
     if lang == "en":
         return (
-            "Thank you for the information.\n\n"
-            "Your brief has been successfully submitted.\n\n"
-            "A PIXORA specialist will contact you after reviewing the request."
+            "Thank you for providing the information.\n\n"
+            "Your brief has been successfully forwarded to PIXORA specialist Serhii +380974537174, @pixora_studio_com.\n\n"
+            "After reviewing the project details, Serhii will contact you personally to discuss the requirements, answer your questions, and agree on the next steps.\n\n"
+            "Talk to you soon."
         )
     
     return (
         "Спасибо за предоставленную информацию.\n\n"
-        "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
-        "После анализа заявки мы свяжемся с вами."
+        "Ваш бриф успешно передан специалисту PIXORA Сергею +380974537174, @pixora_studio_com.\n\n"
+        "После ознакомления с проектом Сергей свяжется с вами лично, чтобы обсудить детали, ответить на вопросы и согласовать дальнейшие шаги.\n\n"
+        "До связи!"
     )
 
 def get_name_reply(lang, name):
