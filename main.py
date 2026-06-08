@@ -228,32 +228,32 @@ async def ask_gpt(state, message):
 
 async def send_lead(update, context, user_id):
 
-state = user_data[user_id]
-data = state["answers"]
-
-username = (
-    f"@{update.effective_user.username}"
-    if update.effective_user.username
-    else "не указан"
-)
-
-lead_text = (
-    "🔥 PIXORA NEW LEAD\n\n"
-    f"Имя:\n{data.get('name', '-')}\n\n"
-    f"Бизнес:\n{data.get('business', '-')}\n\n"
-    f"Цель:\n{data.get('goal', '-')}\n\n"
-    f"Аудитория:\n{data.get('audience', '-')}\n\n"
-    f"Примеры:\n{data.get('examples', '-')}\n\n"
-    f"Сроки:\n{data.get('timeline', '-')}\n\n"
-    f"Контакт:\n{data.get('contact', '-')}\n\n"
-    f"Telegram Username:\n{username}\n\n"
-    f"Telegram ID:\n{update.effective_user.id}"
-)
-
-await context.bot.send_message(
-    chat_id=LEAD_CHAT_ID,
-    text=lead_text
-)
+    state = user_data[user_id]
+    data = state["answers"]
+    
+    username = (
+        f"@{update.effective_user.username}"
+        if update.effective_user.username
+        else "не указан"
+    )
+    
+    lead_text = (
+        "🔥 PIXORA NEW LEAD\n\n"
+        f"Имя:\n{data.get('name', '-')}\n\n"
+        f"Бизнес:\n{data.get('business', '-')}\n\n"
+        f"Цель:\n{data.get('goal', '-')}\n\n"
+        f"Аудитория:\n{data.get('audience', '-')}\n\n"
+        f"Примеры:\n{data.get('examples', '-')}\n\n"
+        f"Сроки:\n{data.get('timeline', '-')}\n\n"
+        f"Контакт:\n{data.get('contact', '-')}\n\n"
+        f"Telegram Username:\n{username}\n\n"
+        f"Telegram ID:\n{update.effective_user.id}"
+    )
+    
+    await context.bot.send_message(
+        chat_id=LEAD_CHAT_ID,
+        text=lead_text
+    )
 
 def get_finish_message(lang):
 
