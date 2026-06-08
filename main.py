@@ -320,7 +320,7 @@ async def start(
             "Як до вас звертатися?"
         )
 
-    async def chat(
+async def chat(
         update: Update,
         context: ContextTypes.DEFAULT_TYPE
         ):
@@ -479,7 +479,7 @@ async def start(
         QUESTIONS[
             state["lang"]
         ][next_step]
-    )
+    )    
 
 def main():
 
