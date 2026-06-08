@@ -136,56 +136,56 @@ return STEPS[current_index + 1]
 
 async def ask_gpt(state, user_message):
 
-try:
-
-    history = state.get(
-        "history",
-        []
-    )
-
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        }
-    ]
-
-    messages.extend(history[-10:])
-
-    messages.append(
-        {
-            "role": "user",
-            "content": user_message
-        }
-    )
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        temperature=0.4,
-        messages=messages
-    )
-
-    answer = (
-        response
-        .choices[0]
-        .message
-        .content
-        .strip()
-    )
-
-    state["history"].append(
-        {
-            "role": "user",
-            "content": user_message
-        }
-    )
-
-    state["history"].append(
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    )
+    try:
+    
+        history = state.get(
+            "history",
+            []
+        )
+    
+        messages = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            }
+        ]
+    
+        messages.extend(history[-10:])
+    
+        messages.append(
+            {
+                "role": "user",
+                "content": user_message
+            }
+        )
+    
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0.4,
+            messages=messages
+        )
+    
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+            .strip()
+        )
+    
+        state["history"].append(
+            {
+                "role": "user",
+                "content": user_message
+            }
+        )
+    
+        state["history"].append(
+            {
+                "role": "assistant",
+                "content": answer
+            }
+        )
 
     return answer
 
