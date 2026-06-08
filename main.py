@@ -313,12 +313,12 @@ async def start(
         "lead_sent": False
     }
 
-await update.message.reply_text(
-        "Вітаю.\n\n"
-        "Мене звати Андрій.\n"
-        "Я менеджер студії PIXORA.\n\n"
-        "Як до вас звертатися?"
-    )
+    await update.message.reply_text(
+            "Вітаю.\n\n"
+            "Мене звати Андрій.\n"
+            "Я менеджер студії PIXORA.\n\n"
+            "Як до вас звертатися?"
+        )
 
 async def chat(
     update: Update,
