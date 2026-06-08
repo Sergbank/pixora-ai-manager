@@ -100,19 +100,19 @@ def detect_language(text):
 
     text = text.lower()
 
-if any(ch in text for ch in "іїєґ"):
-    return "uk"
-
-if any(ch in text for ch in "ыэъ"):
-    return "ru"
-
-latin_count = sum(
-    c.isascii() and c.isalpha()
-    for c in text
-)
-
-if latin_count > max(1, len(text) * 0.5):
-    return "en"
+    if any(ch in text for ch in "іїєґ"):
+        return "uk"
+    
+    if any(ch in text for ch in "ыэъ"):
+        return "ru"
+    
+    latin_count = sum(
+        c.isascii() and c.isalpha()
+        for c in text
+    )
+    
+    if latin_count > max(1, len(text) * 0.5):
+        return "en"
 
 return "ru"
 
@@ -120,14 +120,14 @@ def get_next_step(step):
 
     current_index = STEPS.index(step)
 
-if current_index >= len(STEPS) - 1:
-    return None
-
-return STEPS[current_index + 1]
-
-def save_answer(state, step, value):
-
-    state["answers"][step] = value.strip()
+    if current_index >= len(STEPS) - 1:
+        return None
+    
+    return STEPS[current_index + 1]
+    
+    def save_answer(state, step, value):
+    
+        state["answers"][step] = value.strip()
 
 def init_user_state(user_id):
 
