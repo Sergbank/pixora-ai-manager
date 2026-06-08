@@ -499,7 +499,7 @@ async def chat(
     )
     
     if not next_step:
-    return
+        return
 
 answer_value = text
 
