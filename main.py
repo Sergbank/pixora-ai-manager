@@ -489,30 +489,30 @@ async def chat(
             text
         )
 
-    if ai_result.strip() != "VALID_NAME":
-
-        await update.message.reply_text(
-            ai_result
-        )
-
-        return
-
-    save_answer(
-        state,
-        "name",
-        text
-    )
-
-    state["step"] = "business"
-
-    await update.message.reply_text(
-        get_name_reply(
-            state["lang"],
+        if ai_result.strip() != "VALID_NAME":
+    
+            await update.message.reply_text(
+                ai_result
+            )
+    
+            return
+    
+        save_answer(
+            state,
+            "name",
             text
         )
-    )
-
-    return
+    
+        state["step"] = "business"
+    
+        await update.message.reply_text(
+            get_name_reply(
+                state["lang"],
+                text
+            )
+        )
+    
+        return
 
     current_step = state["step"]
 
