@@ -481,7 +481,7 @@ async def chat(
     else:
         state = user_data[user_id]
     
-        if state["step"] == "name":
+    if state["step"] == "name":
 
             state["lang"] = detect_language(text)
     
