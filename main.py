@@ -401,10 +401,10 @@ def is_brief_finished(
     state
     ):
 
-return (
-    state["step"] == "contact"
-    and "contact" in state["answers"]
-)
+    return (
+        state["step"] == "contact"
+        and "contact" in state["answers"]
+    )
 
 def move_to_next_step(
     state
@@ -416,10 +416,10 @@ def move_to_next_step(
         current_step
     )
 
-if next_step:
-    state["step"] = next_step
-
-return next_step
+    if next_step:
+        state["step"] = next_step
+    
+    return next_step
 
 async def chat(
     update: Update,
@@ -434,21 +434,21 @@ async def chat(
         update.message.text or ""
     ).strip()
 
-if not text:
-    return
-
-if user_id not in user_data:
-
-    state = init_user_state(
-        user_id,
-        text
-    )
-
-else:
-
-    state = user_data[user_id]
-
-if state["step"] == "name":
+    if not text:
+        return
+    
+    if user_id not in user_data:
+    
+        state = init_user_state(
+            user_id,
+            text
+        )
+    
+    else:
+    
+        state = user_data[user_id]
+    
+    if state["step"] == "name":
     
     state["lang"] = detect_language(
         text
