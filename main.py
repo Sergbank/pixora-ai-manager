@@ -277,20 +277,29 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Спробуйте ще раз."
         )
 
-    if "[PIXORA_LEAD_READY]" in answer:
+        if "[PIXORA_LEAD_READY]" in answer:
 
-    print("LEAD DETECTED")
+        print("LEAD DETECTED")
 
-    lead_text = answer
+        lead_text = answer
 
-    await context.bot.send_message(
-        chat_id=499657192,
-        text=lead_text
-    )
+        await context.bot.send_message(
+            chat_id=499657192,
+            text=lead_text
+        )
 
-    print("LEAD SENT TO SERGEY")
+        print("LEAD SENT TO SERGEY")
 
         clean_answer = (
+            "Дякую за надану інформацію.\n\n"
+            "Я вже підготував попередній опис вашого проєкту та передав інформацію спеціалісту PIXORA.\n\n"
+            "Найближчим часом з вами зв'яжеться Сергій для обговорення деталей, термінів реалізації та вартості робіт.\n\n"
+            "Дякуємо за звернення до PIXORA."
+        )
+
+    else:
+
+        clean_answer = answer = (
             "Дякую за надану інформацію.\n\n"
             "Я вже сформував попередній опис вашого проєкту.\n\n"
             "Найближчим часом з вами зв'яжеться спеціаліст PIXORA Сергій.\n\n"
