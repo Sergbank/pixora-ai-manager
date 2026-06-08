@@ -431,11 +431,11 @@ reply = None
 
 if current_step == "business":
 
-    reply = await ask_gpt(
+reply = await ask_gpt(
         state,
         f"Клієнт написав про свій бізнес: {text}. "
         f"Коротко підтвердь отримання інформації."
-    )
+    )    
 
 elif current_step == "goal":
 
