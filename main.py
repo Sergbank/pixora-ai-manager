@@ -674,39 +674,43 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     answer = response.choices[0].message.content
 
-if not answer:
-    answer = "Вибачте, сталася помилка при обробці запиту. Спробуйте ще раз."
+    if not answer:
+        answer = (
+            "Вибачте, сталася помилка при обробці запиту. "
+            "Спробуйте ще раз."
+        )
 
-if "[PIXORA_LEAD_READY]" in answer:
+    if "[PIXORA_LEAD_READY]" in answer:
 
-    lead_text = answer
+        lead_text = answer
 
-    await context.bot.send_message(
-        chat_id=499657192,
-        text=lead_text
+        await context.bot.send_message(
+            chat_id=499657192,
+            text=lead_text
+        )
+
+        clean_answer = (
+            "Дякую за надану інформацію.\n\n"
+            "Я вже сформував попередній опис вашого проєкту.\n\n"
+            "Найближчим часом з вами зв'яжеться спеціаліст PIXORA Сергій.\n\n"
+            "З ним ви зможете обговорити технічні деталі, "
+            "терміни реалізації та питання оплати.\n\n"
+            "Дякуємо за звернення до компанії PIXORA."
+        )
+
+    else:
+        clean_answer = answer
+
+    user_history[user_id].append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
     )
 
-    clean_answer = (
-        "Дякую за надану інформацію.\n\n"
-        "Я вже сформував попередній опис вашого проєкту.\n\n"
-        "Найближчим часом з вами зв'яжеться спеціаліст PIXORA Сергій.\n\n"
-        "З ним ви зможете обговорити технічні деталі, терміни реалізації та питання оплати.\n\n"
-        "Дякуємо за звернення до компанії PIXORA."
-    )
+    await update.message.reply_text(clean_answer)
 
-else:
 
-    clean_answer = answer
-
-user_history[user_id].append(
-    {
-        "role": "assistant",
-        "content": clean_answer
-    }
-)
-
-await update.message.reply_text(clean_answer)
-    
 def main():
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
