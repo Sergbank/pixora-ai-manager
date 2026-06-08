@@ -674,7 +674,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     answer = response.choices[0].message.content
     print(answer)
-    if "[PIXORA_LEAD_READY]" in answer:
+if "[PIXORA_LEAD_READY]" in answer:
 
     lead_text = answer
 
