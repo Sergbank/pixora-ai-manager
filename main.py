@@ -332,7 +332,7 @@ async def ask_gpt(state, message):
     
     except Exception as e:
     
-        print(f"GPT ERROR: {e}")
+        print(f"GPT ERROR: {e}") 
         return None
 
 async def check_name_with_ai(text):
