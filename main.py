@@ -441,6 +441,8 @@ await update.message.reply_text(
     )
 )
 
+return
+
 current_step = state["step"]
 
 if looks_like_question(text):
