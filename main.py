@@ -262,10 +262,14 @@ async def ask_gpt(state, message):
     try:
     
         messages = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            }
+    {
+        "role": "system",
+        "content": SYSTEM_PROMPT
+    },
+    {
+        "role": "system",
+        "content": f"Current client language: {state['lang']}. Answer ONLY in this language."
+    }
         ]
     
         messages.extend(
