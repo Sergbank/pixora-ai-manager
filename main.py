@@ -335,6 +335,39 @@ async def ask_gpt(state, message):
         print(f"GPT ERROR: {e}")
         return None
 
+async def check_name_with_ai(text):
+
+try:
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0,
+        messages=[
+            {
+                "role": "system",
+                "content": NAME_CHECK_PROMPT.format(
+                    message=text
+                )
+            }
+        ]
+    )
+
+    return (
+        response
+        .choices[0]
+        .message
+        .content
+        .strip()
+    )
+
+except Exception as e:
+
+    print(
+        f"NAME CHECK ERROR: {e}"
+    )
+
+    return "VALID_NAME"
+
 async def send_lead(update, context, user_id):
 
     state = user_data[user_id]
