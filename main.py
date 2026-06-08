@@ -171,59 +171,60 @@ return any(
 
 async def ask_gpt(state, message):
 
-try:
-
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        }
-    ]
-
-    messages.extend(
-        state["history"][-10:]
-    )
-
-    messages.append(
-        {
-            "role": "user",
-            "content": message
-        }
-    )
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        temperature=0.4,
-        messages=messages
-    )
-
-    answer = (
-        response
-        .choices[0]
-        .message
-        .content
-        .strip()
-    )
-
-    state["history"].append(
-        {
-            "role": "user",
-            "content": message
-        }
-    )
-
-    state["history"].append(
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    )
-
-    return answer
-
-except Exception as e:
-
-    print(f"GPT ERROR: {e}")
+    try:
+    
+        messages = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            }
+        ]
+    
+        messages.extend(
+            state["history"][-10:]
+        )
+    
+        messages.append(
+            {
+                "role": "user",
+                "content": message
+            }
+        )
+    
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0.4,
+            messages=messages
+        )
+    
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+            .strip()
+        )
+    
+        state["history"].append(
+            {
+                "role": "user",
+                "content": message
+            }
+        )
+    
+        state["history"].append(
+            {
+                "role": "assistant",
+                "content": answer
+            }
+        )
+    
+        return answer
+    
+    except Exception as e:
+    
+        print(f"GPT ERROR: {e}")
+        return None
 
 async def send_lead(update, context, user_id):
 
