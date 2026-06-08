@@ -482,8 +482,40 @@ async def chat(
         state = user_data[user_id]
     
     if state["step"] == "name":
-    
-    current_step = state["step"]
+
+state["lang"] = detect_language(text)
+
+ai_result = await check_name_with_ai(
+    text
+)
+
+if ai_result.strip() != "VALID_NAME":
+
+    await update.message.reply_text(
+        ai_result
+    )
+
+    return
+
+save_answer(
+    state,
+    "name",
+    text
+)
+
+state["step"] = "business"
+
+await update.message.reply_text(
+    get_name_reply(
+        state["lang"],
+        text
+    )
+)
+
+return
+
+current_step = state["step"]
+
     
     if looks_like_question(text):
     
