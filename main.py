@@ -494,11 +494,11 @@ async def chat(
 
     return
 
-next_step = move_to_next_step(
-    state
-)
-
-if not next_step:
+    next_step = move_to_next_step(
+        state
+    )
+    
+    if not next_step:
     return
 
 answer_value = text
