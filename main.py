@@ -1,14 +1,13 @@
 import os
-import random
 from openai import OpenAI
 
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters
+ApplicationBuilder,
+CommandHandler,
+MessageHandler,
+ContextTypes,
+filters
 )
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -17,492 +16,622 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LEAD_CHAT_ID = 499657192
 
 client = OpenAI(
-    api_key=OPENAI_API_KEY
+api_key=OPENAI_API_KEY
 )
 
-# =========================
-# GPT PROMPT
-# =========================
-
 SYSTEM_PROMPT = """
-Ти менеджер студії PIXORA.
+Ти професійний менеджер студії PIXORA.
 
-PIXORA займається створенням лендингів під ключ.
+Основна спеціалізація PIXORA:
+
+* створення лендингів
+* корпоративних сайтів
+* сайтів-візиток
+* сайтів послуг
+* модернізація існуючих сайтів
 
 Клієнт вже прийшов із сайту PIXORA.
 
-Клієнт вже зацікавлений у створенні лендингу.
+Твоя задача:
 
-НЕ потрібно:
-
-- вітатися повторно
-- знайомитися повторно
-- питати "чим можу допомогти"
-- питати "який сайт вас цікавить"
-- вести дружню бесіду
-- розтягувати діалог
-
-Твоє завдання:
-
-Лише коротко відповідати на додаткові питання клієнта під час заповнення брифу.
-
-Максимум 2-3 речення.
+1. Допомогти клієнту пройти короткий бриф.
+2. Відповідати на додаткові питання клієнта.
+3. Пояснювати процес роботи.
+4. Виявляти потребу клієнта.
+5. Зберігати діловий стиль спілкування.
+6. Не вести особистих розмов.
+7. Не жартувати.
+8. Не переходити на дружній стиль.
+9. Не використовувати емодзі.
+10. Завжди бути ввічливим та професійним.
 
 Якщо клієнт питає про ціну:
-Поясни що вартість залежить від складності проєкту та буде розрахована після короткого брифу.
+Поясни що вартість залежить від структури сайту, функціоналу та обсягу робіт. Точний розрахунок можливий після заповнення короткого брифу.
 
 Якщо клієнт питає про терміни:
-Поясни що терміни залежать від обсягу робіт та зазвичай складають від кількох днів до кількох тижнів.
+Поясни що терміни залежать від складності проєкту. Більшість лендингів запускаються від кількох днів до кількох тижнів.
 
-НІКОЛИ не використовуй:
+Якщо клієнт питає про процес роботи:
+Коротко поясни етапи:
+аналіз → структура → дизайн → розробка → тестування → запуск.
 
-- Чим можу допомогти?
-- Як я можу допомогти?
-- Радий знайомству
-- Розкажіть детальніше
-- Що вас цікавить?
-- Як справи?
+Відповідай тією мовою, якою пише клієнт.
 
-НІКОЛИ не керуй воронкою.
+Відповідай коротко.
 
-НІКОЛИ не став нових питань.
+Максимум 3 речення.
 
-Ти лише відповідаєш на додаткові питання клієнта.
+Не став нових питань.
+Не змінюй логіку брифу.
+Не вигадуй ціни.
 """
 
-# =========================
-# STORAGE
-# =========================
-
-user_data = {}
-TRANSITIONS = {
-
-    "ru": [
-        "Отлично, {name}.",
-        "Понял, {name}.",
-        "Спасибо.",
-        "Хорошо.",
-        "Отлично, это понял."
-    ],
-
-    "uk": [
-        "Чудово, {name}.",
-        "Зрозумів, {name}.",
-        "Дякую.",
-        "Добре.",
-        "Чудово, це зрозумів."
-    ],
-
-    "en": [
-        "Great, {name}.",
-        "Got it, {name}.",
-        "Thank you.",
-        "Sounds good.",
-        "Understood."
-    ]
-}
 STEPS = [
-    "name",
-    "niche",
-    "goal",
-    "target_audience",
-    "examples",
-    "timeline",
-    "contact"
+"name",
+"business",
+"goal",
+"audience",
+"examples",
+"timeline",
+"contact"
 ]
 
+user_data = {}
 QUESTIONS = {
+"ru": {
+"business": "Расскажите кратко, чем занимается ваш бизнес.",
+"goal": "Какая основная задача будущего сайта? Например: заявки, продажи, запись клиентов или презентация услуг.",
+"audience": "Кто является вашим основным клиентом?",
+"examples": "Есть ли сайты, которые вам нравятся? Если есть — отправьте ссылки.",
+"timeline": "Когда планируете запуск проекта?",
+"contact": "Оставьте удобный контакт для связи: телефон или Telegram."
+},
 
-    "ru": {
-        "niche": "Чем занимается ваш бизнес?",
+"uk": {
+    "business": "Розкажіть коротко, чим займається ваш бізнес.",
+    "goal": "Яка основна задача майбутнього сайту? Наприклад: заявки, продажі, запис клієнтів або презентація послуг.",
+    "audience": "Хто є вашим основним клієнтом?",
+    "examples": "Є сайти, які вам подобаються? Якщо є — надішліть посилання.",
+    "timeline": "Коли плануєте запуск проєкту?",
+    "contact": "Залиште зручний контакт для зв'язку: телефон або Telegram."
+},
 
-        "goal":
-        "Какая главная задача будущего лендинга?\n\n"
-        "Например:\n"
-        "• Получение заявок\n"
-        "• Запись клиентов\n"
-        "• Продажа услуг\n"
-        "• Продажа товаров",
-
-        "target_audience":
-        "Кто ваш основной клиент?\n\n"
-        "Опишите коротко целевую аудиторию.",
-
-        "examples":
-        "Есть примеры сайтов которые вам нравятся?\n\n"
-        "Если есть — отправьте ссылки.",
-
-        "timeline":
-        "Когда планируете запуск проекта?\n\n"
-        "• Срочно\n"
-        "• В течение недели\n"
-        "• В течение месяца\n"
-        "• Пока изучаю варианты",
-
-        "contact":
-        "Оставьте телефон или Telegram для связи."
-    },
-
-    "uk": {
-        "niche": "Чим займається ваш бізнес?",
-
-        "goal":
-        "Яка головна задача майбутнього лендингу?\n\n"
-        "Наприклад:\n"
-        "• Отримання заявок\n"
-        "• Запис клієнтів\n"
-        "• Продаж послуг\n"
-        "• Продаж товарів",
-
-        "target_audience":
-        "Хто ваш основний клієнт?\n\n"
-        "Опишіть коротко вашу цільову аудиторію.",
-
-        "examples":
-        "Є приклади сайтів які вам подобаються?\n\n"
-        "Якщо є — надішліть посилання.",
-
-        "timeline":
-        "Коли плануєте запуск проєкту?\n\n"
-        "• Терміново\n"
-        "• Протягом тижня\n"
-        "• Протягом місяця\n"
-        "• Поки вивчаю варіанти",
-
-        "contact":
-        "Залиште номер телефону або Telegram для зв'язку."
-    },
-
-    "en": {
-        "niche": "What does your business do?",
-
-        "goal":
-        "What is the main goal of the landing page?",
-
-        "target_audience":
-        "Who is your target audience?",
-
-        "examples":
-        "Do you have examples of websites you like?",
-
-        "timeline":
-        "When do you plan to launch the project?",
-
-        "contact":
-        "Please leave your phone number or Telegram."
-    }
+"en": {
+    "business": "Please briefly describe your business.",
+    "goal": "What is the main purpose of the future website?",
+    "audience": "Who is your primary target audience?",
+    "examples": "Do you have any websites you like? If yes, please send links.",
+    "timeline": "When do you plan to launch the project?",
+    "contact": "Please leave your phone number or Telegram contact."
 }
 
-
-# =========================
-# LANGUAGE DETECTION
-# =========================
+}
 
 def detect_language(text):
 
-    text = text.lower()
+text = text.lower()
 
-    if any(ch in text for ch in "іїєґ"):
-        return "uk"
+if any(ch in text for ch in "іїєґ"):
+    return "uk"
 
-    if any(ch in text for ch in "ыэъ"):
-        return "ru"
-
-    latin = sum(c.isascii() and c.isalpha() for c in text)
-
-    if latin > len(text) * 0.6:
-        return "en"
-
+if any(ch in text for ch in "ыэъ"):
     return "ru"
-def transition(lang, name):
 
-    phrase = random.choice(
-        TRANSITIONS[lang]
+latin_count = sum(
+    c.isascii() and c.isalpha()
+    for c in text
+)
+
+if len(text) > 0 and latin_count > len(text) * 0.6:
+    return "en"
+
+return "ru"
+
+def get_next_step(step):
+
+current_index = STEPS.index(step)
+
+if current_index >= len(STEPS) - 1:
+    return None
+
+return STEPS[current_index + 1]
+
+async def ask_gpt(state, user_message):
+
+try:
+
+    history = state.get(
+        "history",
+        []
     )
 
-    return phrase.format(
-        name=name
+    messages = [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        }
+    ]
+
+    messages.extend(history[-10:])
+
+    messages.append(
+        {
+            "role": "user",
+            "content": user_message
+        }
     )
 
-# =========================
-# GPT SIDE QUESTIONS
-# =========================
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0.4,
+        messages=messages
+    )
 
-async def ask_gpt(question):
+    answer = (
+        response
+        .choices[0]
+        .message
+        .content
+        .strip()
+    )
 
-    try:
+    state["history"].append(
+        {
+            "role": "user",
+            "content": user_message
+        }
+    )
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0.3,
-            messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
-                {
-                    "role": "user",
-                    "content": question
-                }
-            ]
-        )
+    state["history"].append(
+        {
+            "role": "assistant",
+            "content": answer
+        }
+    )
 
-        return response.choices[0].message.content
+    return answer
 
-    except Exception as e:
+except Exception as e:
 
-        print("GPT ERROR")
-        print(str(e))
+    print(
+        f"GPT ERROR: {str(e)}"
+    )
 
-        return None
-
-
-# =========================
-# QUESTION CHECK
-# =========================
+    return None
 
 def looks_like_question(text):
 
-    text = text.lower()
+text = text.lower()
 
-    triggers = [
-        "?",
-        "сколько",
-        "ціна",
-        "цены",
-        "стоимость",
-        "вартість",
-        "price",
-        "timeline",
-        "срок",
-        "термін",
-        "seo",
-        "логотип",
-        "почему",
-        "як",
-        "как",
-        "what",
-        "when",
-        "where"
-    ]
+triggers = [
+    "?",
+    "цена",
+    "ціна",
+    "стоимость",
+    "вартість",
+    "сколько",
+    "термін",
+    "срок",
+    "логотип",
+    "seo",
+    "домен",
+    "хостинг",
+    "як",
+    "как",
+    "why",
+    "what",
+    "when",
+    "where",
+    "price",
+    "cost"
+]
 
-    return any(t in text for t in triggers)
-
-
-# =========================
-# SEND LEAD
-# =========================
+return any(
+    trigger in text
+    for trigger in triggers
+)
 
 async def send_lead(update, context, user_id):
 
-    data = user_data[user_id]["answers"]
+state = user_data[user_id]
 
-    username = update.effective_user.username
+data = state["answers"]
 
-    username_text = (
-        f"@{username}"
-        if username
-        else "Не вказано"
+username = (
+    f"@{update.effective_user.username}"
+    if update.effective_user.username
+    else "Не указан"
+)
+
+summary = []
+
+if data.get("business"):
+    summary.append(
+        f"Ниша: {data['business']}"
     )
 
-    lead_text = (
-        "🔥 НОВА ЗАЯВКА PIXORA\n\n"
-        f"Ім'я: {data.get('name','')}\n\n"
-        f"Ніша: {data.get('niche','')}\n\n"
-        f"Задача лендингу: {data.get('goal','')}\n\n"
-        f"Цільова аудиторія: {data.get('target_audience','')}\n\n"
-        f"Приклади: {data.get('examples','')}\n\n"
-        f"Терміни запуску: {data.get('timeline','')}\n\n"
-        f"Контакт: {data.get('contact','')}\n\n"
-        f"Username: {username_text}\n"
-        f"Telegram ID: {update.effective_user.id}"
+if data.get("goal"):
+    summary.append(
+        f"Цель: {data['goal']}"
     )
 
-    await context.bot.send_message(
-        chat_id=LEAD_CHAT_ID,
-        text=lead_text
+if data.get("audience"):
+    summary.append(
+        f"ЦА: {data['audience']}"
     )
 
-
-# =========================
-# START
-# =========================
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    user_id = str(update.effective_user.id)
-
-    user_data[user_id] = {
-        "lang": "uk",
-        "step": "name",
-        "answers": {},
-        "lead_sent": False
-    }
-
-    await update.message.reply_text(
-        "Вітаю 👋\n\n"
-        "Мене звати Андрій.\n"
-        "Я менеджер компанії PIXORA.\n\n"
-        "Як до вас звертатись?"
+if data.get("timeline"):
+    summary.append(
+        f"Сроки: {data['timeline']}"
     )
 
+brief_summary = "\n".join(summary)
 
-# =========================
-# CHAT
-# =========================
+lead_text = (
+    "🔥 НОВЫЙ ЛИД PIXORA\n\n"
 
-async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    f"Имя:\n"
+    f"{data.get('name', '-')}\n\n"
 
-    user_id = str(update.effective_user.id)
+    f"Бизнес:\n"
+    f"{data.get('business', '-')}\n\n"
 
-    text = (update.message.text or "").strip()
+    f"Цель сайта:\n"
+    f"{data.get('goal', '-')}\n\n"
 
-    if user_id not in user_data:
+    f"Целевая аудитория:\n"
+    f"{data.get('audience', '-')}\n\n"
 
-        user_data[user_id] = {
-            "lang": detect_language(text),
-            "step": "name",
-            "answers": {},
-            "lead_sent": False
-        }
+    f"Примеры сайтов:\n"
+    f"{data.get('examples', '-')}\n\n"
+
+    f"Сроки:\n"
+    f"{data.get('timeline', '-')}\n\n"
+
+    f"Контакт:\n"
+    f"{data.get('contact', '-')}\n\n"
+
+    f"Telegram:\n"
+    f"{username}\n\n"
+
+    f"Telegram ID:\n"
+    f"{update.effective_user.id}\n\n"
+
+    f"КРАТКОЕ РЕЗЮМЕ:\n"
+    f"{brief_summary}"
+)
+
+await context.bot.send_message(
+    chat_id=LEAD_CHAT_ID,
+    text=lead_text
+)
+
+def get_finish_message(lang):
+
+if lang == "uk":
+
+    return (
+        "Дякую за інформацію.\n\n"
+        "Бриф успішно сформовано та передано спеціалісту PIXORA.\n\n"
+        "Після аналізу інформації ми зв'яжемося з вами для обговорення деталей проєкту."
+    )
+
+if lang == "en":
+
+    return (
+        "Thank you for the information.\n\n"
+        "Your brief has been successfully submitted to the PIXORA team.\n\n"
+        "After reviewing the information, we will contact you to discuss the project details."
+    )
+
+return (
+    "Спасибо за информацию.\n\n"
+    "Бриф успешно сформирован и передан специалисту PIXORA.\n\n"
+    "После анализа информации мы свяжемся с вами для обсуждения деталей проекта."
+)
+
+def get_name_reply(lang, name):
+
+if lang == "uk":
+    return (
+        f"Дякую, {name}.\n\n"
+        f"{QUESTIONS['uk']['business']}"
+    )
+
+if lang == "en":
+    return (
+        f"Thank you, {name}.\n\n"
+        f"{QUESTIONS['en']['business']}"
+    )
+
+return (
+    f"Спасибо, {name}.\n\n"
+    f"{QUESTIONS['ru']['business']}"
+)
+async def start(
+update: Update,
+context: ContextTypes.DEFAULT_TYPE
+):
+
+user_id = str(
+    update.effective_user.id
+)
+
+user_data[user_id] = {
+    "lang": "uk",
+    "step": "name",
+    "answers": {},
+    "history": [],
+    "lead_sent": False
+}
+
+await update.message.reply_text(
+    "Вітаю.\n\n"
+    "Мене звати Андрій.\n"
+    "Я менеджер студії PIXORA.\n\n"
+    "Як до вас звертатися?"
+)
+
+def init_user_state(
+user_id,
+text
+):
+
+user_data[user_id] = {
+    "lang": detect_language(text),
+    "step": "name",
+    "answers": {},
+    "history": [],
+    "lead_sent": False
+}
+
+return user_data[user_id]
+
+def save_answer(
+state,
+step,
+value
+):
+
+state["answers"][step] = value.strip()
+
+def get_current_question(
+state
+):
+
+lang = state["lang"]
+
+step = state["step"]
+
+return QUESTIONS[lang][step]
+
+def is_brief_finished(
+state
+):
+
+return (
+    state["step"] == "contact"
+    and "contact" in state["answers"]
+)
+
+def move_to_next_step(
+state
+):
+
+current_step = state["step"]
+
+next_step = get_next_step(
+    current_step
+)
+
+if next_step:
+
+    state["step"] = next_step
+
+return next_step
+
+async def chat(
+update: Update,
+context: ContextTypes.DEFAULT_TYPE
+):
+
+user_id = str(
+    update.effective_user.id
+)
+
+text = (
+    update.message.text or ""
+).strip()
+
+if not text:
+    return
+
+if user_id not in user_data:
+
+    state = init_user_state(
+        user_id,
+        text
+    )
+
+else:
 
     state = user_data[user_id]
 
-    # Побочный вопрос
+if state["step"] == "name":
 
-    if (
-        state["step"] != "name"
-        and looks_like_question(text)
-    ):
+    state["lang"] = detect_language(
+        text
+    )
 
-        answer = await ask_gpt(text)
+    save_answer(
+        state,
+        "name",
+        text
+    )
 
-        if answer:
+    state["step"] = "business"
 
-            await update.message.reply_text(answer)
+    await update.message.reply_text(
+        get_name_reply(
+            state["lang"],
+            text
+        )
+    )
 
-        current_step = state["step"]
+    return
+
+current_step = state["step"]
+
+if looks_like_question(text):
+
+    gpt_answer = await ask_gpt(
+        state,
+        text
+    )
+
+    if gpt_answer:
 
         await update.message.reply_text(
-            QUESTIONS[state["lang"]][current_step]
+            gpt_answer
         )
 
-        return
+    await update.message.reply_text(
+        QUESTIONS[
+            state["lang"]
+        ][current_step]
+    )
 
-    # Имя
+    return
 
-    if state["step"] == "name":
+save_answer(
+    state,
+    current_step,
+    text
+)
 
-        state["lang"] = detect_language(text)
+if current_step == "contact":
 
-        state["answers"]["name"] = text
+    if not state["lead_sent"]:
 
-        state["step"] = "niche"
+        state["lead_sent"] = True
+
+        await send_lead(
+            update,
+            context,
+            user_id
+        )
+
+    await update.message.reply_text(
+        get_finish_message(
+            state["lang"]
+        )
+    )
+
+    return
+
+next_step = move_to_next_step(
+    state
+)
+
+if not next_step:
+    return
+
+answer_value = text
+
+if current_step == "business":
+
+    prompt = (
+        f"Клієнт написав свою нішу: "
+        f"{answer_value}\n\n"
+        f"Дай коротку професійну відповідь "
+        f"одним реченням без нових питань."
+    )
+
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
+
+    if reply:
 
         await update.message.reply_text(
-            QUESTIONS[state["lang"]]["niche"]
+            reply
         )
 
-        return
+elif current_step == "goal":
 
-    # Остальные шаги
+    prompt = (
+        f"Клієнт описав мету сайту: "
+        f"{answer_value}\n\n"
+        f"Коротко підтвердь що інформацію "
+        f"отримано без нових питань."
+    )
 
-        current_step = state["step"]
-    
-        state["answers"][current_step] = text
-    
-        current_index = STEPS.index(current_step)
-    
-        next_step = STEPS[current_index + 1]
-    
-        state["step"] = next_step
-        
-        name = state["answers"].get(
-            "name",
-            ""
-        )
-        
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
+
+    if reply:
+
         await update.message.reply_text(
-            f"{transition(state['lang'], name)}\n\n"
-            f"{QUESTIONS[state['lang']][next_step]}"
+            reply
         )
 
-    # Последний шаг
+elif current_step == "audience":
 
-    if current_step == "contact":
+    prompt = (
+        f"Клієнт описав цільову аудиторію: "
+        f"{answer_value}\n\n"
+        f"Коротко підтвердь отримання "
+        f"інформації."
+    )
 
-        if not state["lead_sent"]:
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
 
-            state["lead_sent"] = True
+    if reply:
 
-            await send_lead(
-                update,
-                context,
-                user_id
-            )
+        await update.message.reply_text(
+            reply
+        )
 
-        lang = state["lang"]
-
-        if lang == "ru":
-
-            msg = (
-                "Спасибо за информацию.\n\n"
-                "Ваш бриф успешно сформирован и передан Сергею.\n\n"
-                "Сергей — специалист PIXORA, который будет заниматься вашим проектом.\n\n"
-                "В ближайшее время он свяжется с вами для обсуждения деталей."
-            )
-        
-        elif lang == "uk":
-        
-            msg = (
-                "Дякуємо за інформацію.\n\n"
-                "Ваш бриф успішно сформовано та передано Сергію.\n\n"
-                "Сергій — спеціаліст PIXORA, який буде займатися вашим проєктом.\n\n"
-                "Найближчим часом він зв'яжеться з вами для обговорення деталей."
-            )
-        
-        else:
-        
-            msg = (
-                "Thank you for the information.\n\n"
-                "Your brief has been successfully submitted and assigned to Serhii.\n\n"
-                "He will contact you shortly to discuss the details."
-            )
-
-        await update.message.reply_text(msg)
-
-        return
-
-# =========================
-# MAIN
-# =========================
-
+await update.message.reply_text(
+    QUESTIONS[
+        state["lang"]
+    ][next_step]
+)
 def main():
 
-    app = (
-        ApplicationBuilder()
-        .token(BOT_TOKEN)
-        .build()
+app = (
+    ApplicationBuilder()
+    .token(BOT_TOKEN)
+    .build()
+)
+
+app.add_handler(
+    CommandHandler(
+        "start",
+        start
     )
+)
 
-    app.add_handler(
-        CommandHandler(
-            "start",
-            start
-        )
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        chat
     )
+)
 
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            chat
-        )
-    )
+print(
+    "PIXORA AI Manager started"
+)
 
-    print("PIXORA AI Manager started")
+app.run_polling()
 
-    app.run_polling()
+if **name** == "**main**":
+main()
 
 
-if __name__ == "__main__":
-    main()
