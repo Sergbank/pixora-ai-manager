@@ -483,11 +483,11 @@ async def chat(
     
         if state["step"] == "name":
 
-        state["lang"] = detect_language(text)
-
-        ai_result = await check_name_with_ai(
-            text
-        )
+            state["lang"] = detect_language(text)
+    
+            ai_result = await check_name_with_ai(
+                text
+            )
 
         if ai_result.strip() != "VALID_NAME":
 
