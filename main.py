@@ -447,35 +447,35 @@ async def chat(
     
         reply = await ask_gpt(
             state,
-            f"Клієнт написав про свій бізнес: {text}. Коротко підтвердь отримання інформації."
+            f"A client wrote about their business: {text}. Briefly confirm receipt of information."
         )
     
     elif current_step == "goal":
     
         reply = await ask_gpt(
             state,
-            f"Клієнт описав ціль сайту: {text}. Коротко підтвердь отримання інформації."
+            f"The client described the purpose of the site: {text}. Briefly confirm receipt of information."
         )
     
     elif current_step == "audience":
     
         reply = await ask_gpt(
             state,
-            f"Клієнт описав аудиторію: {text}. Коротко підтвердь отримання інформації."
+            f"The client described the audience: {text}. Briefly confirm receipt of information."
         )
     
     elif current_step == "examples":
     
         reply = await ask_gpt(
             state,
-            f"Клієнт надав приклади сайтів: {text}. Коротко підтвердь отримання інформації."
+            f"The client provided examples of sites: {text}. Briefly confirm receipt of information."
         )
     
     elif current_step == "timeline":
     
         reply = await ask_gpt(
             state,
-            f"Клієнт повідомив строки запуску: {text}. Коротко підтвердь отримання інформації."
+            f"The client has announced the launch date: {text}. Briefly confirm receipt of information."
         )
     
     if reply:
