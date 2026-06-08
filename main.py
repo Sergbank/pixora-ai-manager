@@ -334,7 +334,7 @@ async def chat(
     ).strip()
 
 if not text:
-return
+    return
 
 if user_id not in user_data:
 
