@@ -137,34 +137,34 @@ return STEPS[current_index + 1]
 async def ask_gpt(state, user_message):
 
     try:
-    
+
         history = state.get(
             "history",
             []
         )
-    
+
         messages = [
             {
                 "role": "system",
                 "content": SYSTEM_PROMPT
             }
         ]
-    
+
         messages.extend(history[-10:])
-    
+
         messages.append(
             {
                 "role": "user",
                 "content": user_message
             }
         )
-    
+
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             temperature=0.4,
             messages=messages
         )
-    
+
         answer = (
             response
             .choices[0]
@@ -172,14 +172,14 @@ async def ask_gpt(state, user_message):
             .content
             .strip()
         )
-    
+
         state["history"].append(
             {
                 "role": "user",
                 "content": user_message
             }
         )
-    
+
         state["history"].append(
             {
                 "role": "assistant",
@@ -187,15 +187,15 @@ async def ask_gpt(state, user_message):
             }
         )
 
-    return answer
+        return answer
 
-except Exception as e:
+    except Exception as e:
 
-    print(
-        f"GPT ERROR: {str(e)}"
-    )
+        print(
+            f"GPT ERROR: {str(e)}"
+        )
 
-    return None
+        return None
 
 def looks_like_question(text):
     text = text.lower()
