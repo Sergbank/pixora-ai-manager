@@ -457,6 +457,8 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(msg)
 
+        return
+
         next_step = STEPS[current_index + 1]
     
         state["step"] = next_step
