@@ -400,23 +400,23 @@ async def start(
         
         if current_step == "contact":
     
-        if not state["lead_sent"]:
-    
-            state["lead_sent"] = True
-    
-            await send_lead(
-                update,
-                context,
-                user_id
+            if not state["lead_sent"]:
+        
+                state["lead_sent"] = True
+        
+                await send_lead(
+                    update,
+                    context,
+                    user_id
+                )
+        
+            await update.message.reply_text(
+                get_finish_message(
+                    state["lang"]
+                )
             )
-    
-        await update.message.reply_text(
-            get_finish_message(
-                state["lang"]
-            )
-        )
 
-        return
+            return
     
         next_step = get_next_step(
             current_step
