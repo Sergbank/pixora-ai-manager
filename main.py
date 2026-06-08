@@ -110,29 +110,29 @@ QUESTIONS = {
 def detect_language(text):
     text = text.lower()
 
-if any(ch in text for ch in "іїєґ"):
-    return "uk"
-
-if any(ch in text for ch in "ыэъ"):
+    if any(ch in text for ch in "іїєґ"):
+        return "uk"
+    
+    if any(ch in text for ch in "ыэъ"):
+        return "ru"
+    
+    latin_count = sum(
+        c.isascii() and c.isalpha()
+        for c in text
+    )
+    
+    if len(text) > 0 and latin_count > len(text) * 0.6:
+        return "en"
+    
     return "ru"
-
-latin_count = sum(
-    c.isascii() and c.isalpha()
-    for c in text
-)
-
-if len(text) > 0 and latin_count > len(text) * 0.6:
-    return "en"
-
-return "ru"
 
 def get_next_step(step):
     current_index = STEPS.index(step)
 
-if current_index >= len(STEPS) - 1:
-    return None
-
-return STEPS[current_index + 1]
+    if current_index >= len(STEPS) - 1:
+        return None
+    
+    return STEPS[current_index + 1]
 
 async def ask_gpt(state, user_message):
 
@@ -200,33 +200,33 @@ async def ask_gpt(state, user_message):
 def looks_like_question(text):
     text = text.lower()
 
-triggers = [
-    "?",
-    "цена",
-    "ціна",
-    "стоимость",
-    "вартість",
-    "сколько",
-    "термін",
-    "срок",
-    "логотип",
-    "seo",
-    "домен",
-    "хостинг",
-    "як",
-    "как",
-    "why",
-    "what",
-    "when",
-    "where",
-    "price",
-    "cost"
-]
-
-return any(
-    trigger in text
-    for trigger in triggers
-)
+    triggers = [
+        "?",
+        "цена",
+        "ціна",
+        "стоимость",
+        "вартість",
+        "сколько",
+        "термін",
+        "срок",
+        "логотип",
+        "seo",
+        "домен",
+        "хостинг",
+        "як",
+        "как",
+        "why",
+        "what",
+        "when",
+        "where",
+        "price",
+        "cost"
+    ]
+    
+    return any(
+        trigger in text
+        for trigger in triggers
+    )
 
 async def send_lead(update, context, user_id):
     state = user_data[user_id]
