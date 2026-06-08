@@ -295,10 +295,10 @@ lead_text = (
     f"{brief_summary}"
 )
 
-await context.bot.send_message(
-    chat_id=LEAD_CHAT_ID,
-    text=lead_text
-)
+    await context.bot.send_message(
+        chat_id=LEAD_CHAT_ID,
+        text=lead_text
+    )
 
 def get_finish_message(lang):
 
