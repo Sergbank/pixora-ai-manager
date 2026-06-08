@@ -561,7 +561,11 @@ async def chat(
         )
     
         state["step"] = "business"
-    
+        
+        await asyncio.sleep(
+            random.uniform(1.5, 4.5)
+        )
+        
         await update.message.reply_text(
             get_name_reply(
                 state["lang"],
