@@ -441,15 +441,14 @@ await update.message.reply_text(
     )
 )
 
-return
-current_step = state["step"] 
+current_step = state["step"]
 
 if looks_like_question(text):
 
-        gpt_answer = await ask_gpt(
-            state,
-            text
-        )
+    gpt_answer = await ask_gpt(
+        state,
+        text
+    )
 
     if gpt_answer:
 
@@ -465,131 +464,89 @@ if looks_like_question(text):
 
     return
 
-    save_answer(
-        state,
-        current_step,
-        text
-    )
+save_answer(
+    state,
+    current_step,
+    text
+)
 
-    if current_step == "contact":
-    
-        if not state["lead_sent"]:
-    
-            state["lead_sent"] = True
-    
+if current_step == "contact":
+
+    if not state["lead_sent"]:
+
+        state["lead_sent"] = True
+
         await send_lead(
             update,
             context,
             user_id
         )
-    
-        await update.message.reply_text(
-            get_finish_message(
-                state["lang"]
-            )
+
+    await update.message.reply_text(
+        get_finish_message(
+            state["lang"]
         )
+    )
 
     return
 
-    next_step = move_to_next_step(
-        state
+next_step = move_to_next_step(
+    state
+)
+
+if not next_step:
+    return
+
+answer_value = text
+reply = None
+
+if current_step == "business":
+
+    prompt = (
+        f"Клієнт написав свою нішу:\n"
+        f"{answer_value}\n\n"
+        f"Дай коротку професійну відповідь одним реченням."
     )
-    
-    if not next_step:
-        return
 
-    answer_value = text
-    
-    if current_step == "business":
-    
-        prompt = (
-            f"Клієнт написав свою нішу: "
-            f"{answer_value}\n\n"
-            f"Дай коротку професійну відповідь "
-            f"одним реченням без нових питань."
-        )
-    
-        reply = await ask_gpt(
-            state,
-            prompt
-        )
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
 
-    if reply:
+elif current_step == "goal":
 
-        await update.message.reply_text(
-            reply
-        )
+    prompt = (
+        f"Клієнт описав мету сайту:\n"
+        f"{answer_value}\n\n"
+        f"Коротко підтвердь отримання інформації."
+    )
 
-    elif current_step == "goal":
-    
-        prompt = (
-            f"Клієнт описав мету сайту: "
-            f"{answer_value}\n\n"
-            f"Коротко підтвердь що інформацію "
-            f"отримано без нових питань."
-        )
-    
-        reply = await ask_gpt(
-            state,
-            prompt
-        )
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
 
-    if reply:
+elif current_step == "audience":
 
-        await update.message.reply_text(
-            reply
-        )
+    prompt = (
+        f"Клієнт описав цільову аудиторію:\n"
+        f"{answer_value}\n\n"
+        f"Коротко підтвердь отримання інформації."
+    )
 
-    elif current_step == "audience":
-    
-        prompt = (
-            f"Клієнт описав цільову аудиторію: "
-            f"{answer_value}\n\n"
-            f"Коротко підтвердь отримання "
-            f"інформації."
-        )
-    
-        reply = await ask_gpt(
-            state,
-            prompt
-        )
+    reply = await ask_gpt(
+        state,
+        prompt
+    )
 
-    if reply:
-
-        await update.message.reply_text(
-            reply
-        )
+if reply:
 
     await update.message.reply_text(
-        QUESTIONS[
-            state["lang"]
-        ][next_step]
+        reply
     )
 
-def main():
-
-    app = (
-        ApplicationBuilder()
-        .token(BOT_TOKEN)
-        .build()
-    )
-
-    app.add_handler(
-        CommandHandler(
-            "start",
-            start
-        )
-    )
-
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            chat
-        )
-    )
-
-    print(
-        "PIXORA AI Manager started"
-    )
-
-    app.run_polling()
+await update.message.reply_text(
+    QUESTIONS[
+        state["lang"]
+    ][next_step]
+)
