@@ -162,12 +162,12 @@ def looks_like_question(text):
         "why",
         "price",
         "cost"
-]
-
-return any(
-    text.startswith(item)
-    for item in starters
-)
+    ]
+    
+    return any(
+        text.startswith(item)
+        for item in starters
+    )
 
 async def ask_gpt(state, message):
 
