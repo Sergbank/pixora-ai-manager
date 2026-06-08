@@ -485,7 +485,7 @@ async def chat(
 
         state["lang"] = detect_language(text)
                 
-                ai_result = await check_name_with_ai(
+           ai_result = await check_name_with_ai(
                     text
                 )
                 
@@ -512,8 +512,7 @@ async def chat(
                     )
                 )
                 
-                return
-
+                return     
 current_step = state["step"]
 
     
