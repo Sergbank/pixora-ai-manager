@@ -24,46 +24,49 @@ client = OpenAI(
 # =========================
 
 SYSTEM_PROMPT = """
-You are a sales assistant for PIXORA.
+Ти менеджер студії PIXORA.
 
-IMPORTANT RULES:
+PIXORA займається створенням лендингів під ключ.
 
-You do NOT control the sales funnel.
+Клієнт вже прийшов із сайту PIXORA.
 
-You do NOT collect project information.
+Клієнт вже зацікавлений у створенні лендингу.
 
-You do NOT ask new questions.
+НЕ потрібно:
 
-You only answer side questions.
+- вітатися повторно
+- знайомитися повторно
+- питати "чим можу допомогти"
+- питати "який сайт вас цікавить"
+- вести дружню бесіду
+- розтягувати діалог
 
-Services:
+Твоє завдання:
 
-- Landing Pages
-- Business Websites
-- Online Stores
-- Blogs
-- Website Redesign
-- Website Support
-- Logo Design
-- Basic SEO
+Лише коротко відповідати на додаткові питання клієнта під час заповнення брифу.
 
-Keep answers short.
+Максимум 2-3 речення.
 
-Maximum 3 sentences.
+Якщо клієнт питає про ціну:
+Поясни що вартість залежить від складності проєкту та буде розрахована після короткого брифу.
 
-Answer in the same language as the client.
+Якщо клієнт питає про терміни:
+Поясни що терміни залежать від обсягу робіт та зазвичай складають від кількох днів до кількох тижнів.
 
-If asked about pricing:
-Explain that the final price depends on project scope and functionality.
+НІКОЛИ не використовуй:
 
-If asked about timelines:
-Explain that timelines depend on project complexity.
+- Чим можу допомогти?
+- Як я можу допомогти?
+- Радий знайомству
+- Розкажіть детальніше
+- Що вас цікавить?
+- Як справи?
 
-Never start a conversation.
+НІКОЛИ не керуй воронкою.
 
-Never continue chatting.
+НІКОЛИ не став нових питань.
 
-Only answer the question.
+Ти лише відповідаєш на додаткові питання клієнта.
 """
 
 # =========================
@@ -75,11 +78,10 @@ user_data = {}
 STEPS = [
     "name",
     "niche",
-    "site_type",
-    "logo",
-    "content",
+    "goal",
+    "target_audience",
     "examples",
-    "budget",
+    "timeline",
     "contact"
 ]
 
@@ -87,32 +89,81 @@ QUESTIONS = {
 
     "ru": {
         "niche": "Чем занимается ваш бизнес?",
-        "site_type": "Какой сайт вас интересует?\n\n• Лендинг\n• Корпоративный сайт\n• Интернет-магазин\n• Блог\n• Другое",
-        "logo": "У вас уже есть логотип?",
-        "content": "Тексты и фотографии уже готовы?",
-        "examples": "Есть примеры сайтов которые вам нравятся?",
-        "budget": "На какой бюджет ориентируетесь?",
-        "contact": "Оставьте телефон или Telegram для связи."
+
+        "goal":
+        "Какая главная задача будущего лендинга?\n\n"
+        "Например:\n"
+        "• Получение заявок\n"
+        "• Запись клиентов\n"
+        "• Продажа услуг\n"
+        "• Продажа товаров",
+
+        "target_audience":
+        "Кто ваш основной клиент?\n\n"
+        "Опишите коротко целевую аудиторию.",
+
+        "examples":
+        "Есть примеры сайтов которые вам нравятся?\n\n"
+        "Если есть — отправьте ссылки.",
+
+        "timeline":
+        "Когда планируете запуск проекта?\n\n"
+        "• Срочно\n"
+        "• В течение недели\n"
+        "• В течение месяца\n"
+        "• Пока изучаю варианты",
+
+        "contact":
+        "Оставьте телефон или Telegram для связи."
     },
 
     "uk": {
         "niche": "Чим займається ваш бізнес?",
-        "site_type": "Який сайт вас цікавить?\n\n• Лендінг\n• Корпоративний сайт\n• Інтернет-магазин\n• Блог\n• Інше",
-        "logo": "У вас вже є логотип?",
-        "content": "Тексти та фото вже готові?",
-        "examples": "Є приклади сайтів які вам подобаються?",
-        "budget": "Який бюджет плануєте?",
-        "contact": "Залиште номер телефону або Telegram."
+
+        "goal":
+        "Яка головна задача майбутнього лендингу?\n\n"
+        "Наприклад:\n"
+        "• Отримання заявок\n"
+        "• Запис клієнтів\n"
+        "• Продаж послуг\n"
+        "• Продаж товарів",
+
+        "target_audience":
+        "Хто ваш основний клієнт?\n\n"
+        "Опишіть коротко вашу цільову аудиторію.",
+
+        "examples":
+        "Є приклади сайтів які вам подобаються?\n\n"
+        "Якщо є — надішліть посилання.",
+
+        "timeline":
+        "Коли плануєте запуск проєкту?\n\n"
+        "• Терміново\n"
+        "• Протягом тижня\n"
+        "• Протягом місяця\n"
+        "• Поки вивчаю варіанти",
+
+        "contact":
+        "Залиште номер телефону або Telegram для зв'язку."
     },
 
     "en": {
         "niche": "What does your business do?",
-        "site_type": "What type of website do you need?\n\n• Landing Page\n• Corporate Website\n• Online Store\n• Blog\n• Other",
-        "logo": "Do you already have a logo?",
-        "content": "Do you already have texts and images?",
-        "examples": "Do you have examples of websites you like?",
-        "budget": "What budget are you considering?",
-        "contact": "Leave your phone number or Telegram."
+
+        "goal":
+        "What is the main goal of the landing page?",
+
+        "target_audience":
+        "Who is your target audience?",
+
+        "examples":
+        "Do you have examples of websites you like?",
+
+        "timeline":
+        "When do you plan to launch the project?",
+
+        "contact":
+        "Please leave your phone number or Telegram."
     }
 }
 
@@ -224,11 +275,10 @@ async def send_lead(update, context, user_id):
         "🔥 НОВА ЗАЯВКА PIXORA\n\n"
         f"Ім'я: {data.get('name','')}\n\n"
         f"Ніша: {data.get('niche','')}\n\n"
-        f"Тип сайту: {data.get('site_type','')}\n\n"
-        f"Логотип: {data.get('logo','')}\n\n"
-        f"Контент: {data.get('content','')}\n\n"
+        f"Задача лендингу: {data.get('goal','')}\n\n"
+        f"Цільова аудиторія: {data.get('target_audience','')}\n\n"
         f"Приклади: {data.get('examples','')}\n\n"
-        f"Бюджет: {data.get('budget','')}\n\n"
+        f"Терміни запуску: {data.get('timeline','')}\n\n"
         f"Контакт: {data.get('contact','')}\n\n"
         f"Username: {username_text}\n"
         f"Telegram ID: {update.effective_user.id}"
