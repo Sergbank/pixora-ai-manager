@@ -444,7 +444,7 @@ await update.message.reply_text(
 return
 current_step = state["step"] 
 
-    if looks_like_question(text):
+if looks_like_question(text):
 
         gpt_answer = await ask_gpt(
             state,
