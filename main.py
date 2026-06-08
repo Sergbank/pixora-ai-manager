@@ -314,11 +314,11 @@ async def start(
     }
 
 await update.message.reply_text(
-    "Вітаю.\n\n"
-    "Мене звати Андрій.\n"
-    "Я менеджер студії PIXORA.\n\n"
-    "Як до вас звертатися?"
-)
+        "Вітаю.\n\n"
+        "Мене звати Андрій.\n"
+        "Я менеджер студії PIXORA.\n\n"
+        "Як до вас звертатися?"
+    )
 
 async def chat(
     update: Update,
