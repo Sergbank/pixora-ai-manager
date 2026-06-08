@@ -406,17 +406,19 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif lang == "en":
 
             msg = (
-                "Thank you.\n\n"
-                "Your request has been sent to PIXORA.\n\n"
-                "Serhii will contact you shortly."
+                "Дякуємо за інформацію.\n\n"
+                "Ваш бриф успішно сформовано та передано Сергію.\n\n"
+                "Сергій — спеціаліст PIXORA, який буде займатися вашим проєктом та підготує попередню оцінку вартості й термінів.\n\n"
+                "Найближчим часом він зв'яжеться з вами для обговорення деталей."
             )
 
         else:
 
             msg = (
-                "Дякуємо за інформацію.\n\n"
-                "Заявку успішно передано спеціалісту PIXORA.\n\n"
-                "Сергій зв'яжеться з вами найближчим часом."
+                "Thank you for the information.\n\n"
+                "Your brief has been successfully submitted and assigned to Serhii.\n\n"
+                "Serhii is the PIXORA specialist who will be responsible for your project and prepare a preliminary estimate of cost and timeline.\n\n"
+                "He will contact you shortly to discuss the details."
             )
 
         await update.message.reply_text(msg)
