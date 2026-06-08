@@ -191,105 +191,65 @@ RESPONSE RULES
 
     """
 NAME_CHECK_PROMPT = """
-Ты проверяешь первое сообщение нового клиента.
+You are validating the user's name.
 
-Сообщение клиента:
-
+User message:
 {message}
 
-Твоя задача определить:
+Determine whether the message is likely a person's name.
 
-1. Сообщил ли клиент своё имя.
-2. Или написал что-то другое.
+Accept names written in ANY language:
 
-========================
-ПРАВИЛО
-=======
-
-Если сообщение содержит реальное имя человека,
-ответь строго:
-
-VALID_NAME
-
-Без точек.
-Без пояснений.
-Без дополнительных слов.
-
-Примеры:
+Examples:
 
 Сергей
 Андрей
 Іван
+Олександр
 John
 Michael
-Олег
-Марина
+David
+Sergey
+Serhii
+Oleksii
+Maksym
+Alex
+Alexander
+Jean-Pierre
+O'Connor
 
-→ VALID_NAME
+If the message looks like a real name:
 
-========================
-НЕ СЧИТАТЬ ИМЕНЕМ
-=================
+Reply EXACTLY:
 
-Не являются именем:
+VALID_NAME
 
-* привет
-* здравствуйте
-* добрый день
-* нужен сайт
-* хочу сайт
-* интересует сайт
-* сколько стоит сайт
-* лендинг
-* сайт
-* тест
-* test
-* admin
-* user
-* менеджер
-* алло
-* тук
-* ок
-* *
-* ?
-* 123
-* 111
-* qwerty
+and nothing else.
 
-В таких случаях нужно вежливо попросить представиться.
+Reject:
 
-========================
-ЯЗЫК
-====
+Привет
+Здравствуйте
+Нужен сайт
+Сколько стоит сайт
+test
+тук
+12345
+???
+hello
+hi
 
-Отвечай на том же языке, на котором написал клиент.
+If the message is not a name:
 
-Если клиент пишет по-русски:
+Reply politely in the SAME language as the user.
 
-"Подскажите, пожалуйста, как вас зовут?"
+Ask ONLY for the user's name.
 
-Если клиент пишет по-украински:
+Do not ask any other questions.
 
-"Підкажіть, будь ласка, як до вас звертатися?"
+Do not explain anything.
 
-Если клиент пишет по-английски:
-
-"Could you please tell me your name?"
-
-========================
-ВАЖНО
-=====
-
-Не задавай других вопросов.
-
-Не рассказывай о PIXORA.
-
-Не здоровайся.
-
-Не используй эмодзи.
-
-Если есть сомнения между именем и обычным словом —
-считай, что это НЕ имя и попроси представиться.
+Do not use emojis.
 """
 
 STEPS = [
